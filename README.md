@@ -1,8 +1,24 @@
-# Science Lounge — сайт
+# Science Lounge
 
-Готовые страницы сайта лектория Science Lounge школы «Летово» для GitHub Pages: https://k5nty.github.io/science-lounge-official/
+Сайт лектория Science Lounge школы «Летово»: анонсы лекций, материалы по темам лекций, расписание, конференция и новости науки. Есть русская и английская версии.
 
-Это ветка `gh-pages`. Код сайта (приложение, админка, материалы по темам лекций) лежит в ветке `main`.
+Сайт: https://k5nty.github.io/science-lounge-official/
 
-Публикация: Settings → Pages → Source: «Deploy from a branch», ветка `gh-pages`, папка `/ (root)`.
+## Структура
+
+- `index.html`, `en/index.html` — главная (на ней показываются три последние новости)
+- `novosti/`, `en/news/` — новости науки
+- `vypuski/`, `vypusk/*`, `en/issues/*` — лекции
+- `raspisanie/`, `raspisanie.ics` — расписание и календарь
+- `materialy-lektsiy/` — тексты материалов по темам лекций (RU и EN) и шаблон письма лекторам
+- `assets/` — стили, скрипты, шрифты; `media/`, `og/` — изображения
+
 Все ссылки начинаются с `/science-lounge-official/`, поэтому репозиторий должен называться `science-lounge-official`.
+
+## Как добавить новость
+
+Скопируйте блок `<article class="news-item">…</article>` в начало `<div class="news-list">` в файлах `novosti/index.html` (русский) и `en/news/index.html` (английский). На главных страницах (`index.html`, `en/index.html`) держите три последние новости.
+
+## Публикация
+
+Settings → Pages → Source: «Deploy from a branch», ветка `main`, папка `/ (root)`.
