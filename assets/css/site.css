@@ -484,21 +484,3 @@ footer.site .made { margin-top: 18px; }
 .speaker-box .bio { font-size: 14px; line-height: 1.5; color: var(--muted); margin-top: 8px; }
 .roles { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
 .role-chip { font: 600 11.5px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; padding: 5px 8px; border: 1px solid var(--accent); color: var(--accent); border-radius: var(--radius); }
-
-/* Lecture reconstructions */
-.transcript-note { max-width: 70ch; padding: 12px 14px; border-left: 3px solid var(--warn); font: 400 15px/1.5 var(--f-ui); color: var(--muted); }
-.transcript-note b { color: var(--warn); }
-details.transcript { margin-top: 18px; max-width: 70ch; }
-.transcript-body { padding-top: 8px; }
-.transcript-body h3 { font-size: 21px; margin: 36px 0 10px; }
-.transcript-body h4 { font-size: 17px; margin: 22px 0 8px; }
-.transcript-body ol { padding-left: 22px; display: grid; gap: 6px; margin-top: 10px; }
-.transcript-body ul, .transcript-body ol, .transcript-body pre, .transcript-body .slide { margin-bottom: 12px; }
-.transcript-body p.slide { font: 500 13px/1.45 var(--f-mono); color: var(--muted); }
-.transcript-body pre { overflow-x: auto; padding: 12px 14px; border: 1px solid var(--rule); border-radius: var(--radius); font: 400 14px/1.5 var(--f-mono); }
-.transcript-body hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0; }
-details.transcript > summary { display: inline-flex; gap: 14px; list-style: none; cursor: pointer; border: 1.5px solid var(--ink); padding: 12px 16px; font: 500 14.5px/1 var(--f-ui); border-radius: var(--radius); }
-details.transcript > summary::-webkit-details-marker { display: none; }
-details.transcript > summary::after { content: "+"; font-family: var(--f-mono); }
-details.transcript[open] > summary::after { content: "−"; }
-details.transcript > summary:hover { background: var(--ink); color: var(--paper); }

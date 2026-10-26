@@ -1,19 +1,18 @@
 # Science Lounge
 
-Сайт лектория Science Lounge школы «Летово»: анонсы лекций, материалы по темам лекций, расписание, конференция и новости науки. Есть русская и английская версии.
+Статический сайт лектория Science Lounge школы «Летово»: анонсы лекций, конспекты, расписание, конференция и новости науки. Есть русская и английская версии.
 
-Сайт: https://k5nty.github.io/science-lounge-official/
+Сайт публикуется через GitHub Pages: https://k5nty.github.io/science-lounge-official/
 
 ## Структура
 
 - `index.html`, `en/index.html` — главная (на ней показываются три последние новости)
-- `novosti/`, `en/news/` — новости науки
+- `novosti/`, `en/news/` — все новости науки
 - `vypuski/`, `vypusk/*`, `en/issues/*` — лекции
 - `raspisanie/`, `raspisanie.ics` — расписание и календарь
-- `materialy-lektsiy/` — тексты материалов по темам лекций (RU и EN) и шаблон письма лекторам
 - `assets/` — стили, скрипты, шрифты; `media/`, `og/` — изображения
 
-Все ссылки начинаются с `/science-lounge-official/`, поэтому репозиторий должен называться `science-lounge-official`.
+Все ссылки начинаются с `/science-lounge-official/`, поэтому репозиторий должен называться `science-lounge`.
 
 ## Как добавить новость
 
