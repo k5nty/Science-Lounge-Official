@@ -86,7 +86,7 @@
     function loadIndex() {
       if (index) return Promise.resolve(index);
       if (!loading) {
-        loading = fetch('/science-lounge-official/search-index.json').then(function (r) { return r.json(); }).then(function (rows) {
+        loading = fetch('/Science-Lounge-Official/search-index.json').then(function (r) { return r.json(); }).then(function (rows) {
           index = {};
           rows.forEach(function (r) { index[r.s] = r.x; });
           return index;
