@@ -41,7 +41,7 @@ async function addImage(file, { alt, credit = '', crop = null, consent = 'genera
 }
 
 /* ---------- lecturers ---------- */
-// Portraits of Ratushny, Surdin, Zubov, Volodyaev and Gorshunov come from assets/portraits/ (see import-portraits.js).
+// Lecturer portraits and founder photos come from assets/portraits/ (see import-portraits.js).
 const LECTURERS = {
   ratushny: {
     name: 'Андрей Ратушный', en: 'Andrey Ratushny', area: 'Биология', area_en: 'Biology',
@@ -84,7 +84,6 @@ const LECTURERS = {
     org: 'НИЦ «Курчатовский институт»', org_en: 'Kurchatov Institute',
     bio: 'Зоригто Баирович Намсараев. Кандидат биологических наук, начальник лаборатории синтетической биологии НИЦ «Курчатовский институт».',
     bio_en: 'Zorigto Bairovich Namsaraev. PhD in biology, head of the synthetic biology laboratory at the Kurchatov Institute.',
-    portrait: { file: 'photo_1541961_0.jpg', alt: 'Портрет: Зоригто Намсараев', crop: [0.498, 0.3125, 0.962, 0.723] },
   },
 };
 
@@ -158,7 +157,6 @@ for (const [key, l] of Object.entries(LECTURERS)) {
     null,
   );
 }
-await importPortraits();
 
 for (const i of ISSUES) {
   const photoIds = [];
@@ -248,6 +246,7 @@ saveSettings({
   about_story_en: 'Science Lounge (“Nauchnye gostinye”) is a project by Letovo School students. We invite researchers and university teachers to speak to school students, and publish announcements, write-ups and recordings of the talks here.\n\nTogether with the lecture series we run the “Letovo Engineers” conference.',
 });
 
+await importPortraits();
 const materials = importMaterials();
 
 console.log(`Импортировано: лекторов ${Object.keys(LECTURERS).length}, выпусков ${ISSUES.length}, новостей ${NEWS.length}, материалов по темам лекций ${materials.length}, конференция 2026.`);
