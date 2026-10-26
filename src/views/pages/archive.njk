@@ -1,0 +1,32 @@
+{% extends "layouts/base.njk" %}
+{% import "partials/macros.njk" as m with context %}
+
+{% block content %}
+{% if themePart('archive') %}
+  {% include themePart('archive') %}
+{% else %}
+<div class="sec-head"><h1 class="page-title">{{ t('archive.h') }}</h1><span class="label">{{ t('archive.count', {n: totalCount}) }}{% if listeners %} · {{ t('issue.listeners', {n: listeners}) }}{% endif %}</span></div>
+
+<div class="tools">
+  <form method="get" action="{{ url('archive') }}" role="search" style="flex:1 1 280px">
+    {% if tag %}<input type="hidden" name="tag" value="{{ tag }}">{% endif %}
+    <input type="search" name="q" id="arch-q" value="{{ q }}" placeholder="{{ t('archive.search') }}" aria-label="{{ t('archive.search') }}" autocomplete="off">
+  </form>
+  <div class="chips" role="group" aria-label="Tags" id="arch-tags">
+    <a class="chip" href="{{ url('archive') }}" data-tag="" {% if not tag %}aria-current="true"{% endif %}>{{ t('archive.all') }}</a>
+    {% for tg in tags %}<a class="chip" href="{{ url('archive') }}?tag={{ tg | urlencode }}" data-tag="{{ tg }}" {% if tag == tg %}aria-current="true"{% endif %}>{{ tagName(tagFull.get(tg)) }}</a>{% endfor %}
+  </div>
+</div>
+
+{% if issues | length %}
+<div class="cards" id="arch-list">
+  {% for i in issues %}
+    <div data-slug="{{ i.slug }}" data-tags="{% for tg in i.tags %}{{ tagKey(tg) }}{{ '|' if not loop.last }}{% endfor %}" style="display:contents">{{ m.issueCard(i) }}</div>
+  {% endfor %}
+</div>
+<p class="empty" id="arch-none" hidden>{{ t('archive.none') }}</p>
+{% else %}
+<p class="empty" id="arch-none">{{ t('archive.none') }}</p>
+{% endif %}
+{% endif %}
+{% endblock %}

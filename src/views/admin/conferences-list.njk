@@ -1,0 +1,10 @@
+{% extends "layouts/admin.njk" %}
+{% block title %}Конференции{% endblock %}
+{% block content %}
+<div class="a-head"><h1>Конференции</h1><a class="a-btn primary" href="/admin/conferences/new">Новая конференция</a></div>
+{% if confs | length %}
+<table class="a-table"><thead><tr><th>Год</th><th>Название</th><th>Даты</th><th>Статус</th></tr></thead><tbody>
+{% for c in confs %}<tr><td class="mono"><a href="/admin/conferences/{{ c.id }}">{{ c.year }}</a></td><td>{{ c.title_ru }}</td><td>{{ dRange(c.date_start, c.date_end) }}</td><td>{% if c.published %}<span class="a-badge ok">на сайте</span>{% else %}<span class="a-badge">скрыта</span>{% endif %}</td></tr>{% endfor %}
+</tbody></table>
+{% else %}<p class="empty">Конференций пока нет. Страница строится из этих данных и рассчитана на следующие годы.</p>{% endif %}
+{% endblock %}

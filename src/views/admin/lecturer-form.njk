@@ -1,0 +1,69 @@
+{% extends "layouts/admin.njk" %}
+{% import "admin/_macros.njk" as a %}
+{% block title %}{{ lecturer.name_ru or 'Новый лектор' }}{% endblock %}
+
+{% macro linkItem(x, i) %}
+<div class="a-rep-item row" data-item>
+  <div class="a-field"><label>Название</label><input type="text" name="links[{{ i }}][label]" value="{{ x.label }}" maxlength="80" placeholder="Сайт, научный профиль, Telegram"></div>
+  <div class="a-field"><label>Ссылка</label><input type="text" name="links[{{ i }}][url]" value="{{ x.url }}" maxlength="500" placeholder="https://"></div>
+  <span class="a-rep-tools"><button type="button" data-remove title="Удалить">×</button></span>
+</div>
+{% endmacro %}
+
+{% block content %}
+<form method="post" action="{{ '/admin/lecturers' if isNew else '/admin/lecturers/' + lecturer.id }}" class="a-form" data-guard novalidate>
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <div class="a-head"><h1>{{ 'Новый лектор' if isNew else lecturer.name_ru }}</h1></div>
+  {% if errors | length %}<div class="a-flash err"><ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+  <div class="a-layout">
+    <div class="a-col">
+      <section class="a-section">
+        <h2>Основное</h2>
+        <div class="a-grid">
+          {{ a.field('Имя', 'name_ru', lecturer.name_ru, {required: true, max: 80}) }}
+          {{ a.field('Имя по-английски', 'name_en', lecturer.name_en) }}
+        </div>
+        <div class="a-grid">
+          {{ a.field('Должность', 'role_ru', lecturer.role_ru, {hint: 'Например: научный сотрудник'}) }}
+          {{ a.field('Должность по-английски', 'role_en', lecturer.role_en) }}
+        </div>
+        <div class="a-grid">
+          {{ a.field('Организация', 'org_ru', lecturer.org_ru, {hint: 'Университет, институт, лаборатория'}) }}
+          {{ a.field('Организация по-английски', 'org_en', lecturer.org_en) }}
+        </div>
+        <div class="a-grid">
+          {{ a.field('Область', 'area', lecturer.area, {list: 'areas', hint: 'Физика, биология, математика… Нужна для фильтра.'}) }}
+          {{ a.field('Область по-английски', 'area_en', lecturer.area_en) }}
+        </div>
+        <datalist id="areas">{% for x in areas %}<option value="{{ x }}">{% endfor %}</datalist>
+        {{ a.field('Адрес страницы (необязательно)', 'slug', lecturer.slug, {hint: 'Если пусто, соберётся из имени: /lektory/ivan-ivanov'}) }}
+      </section>
+      <section class="a-section">
+        <h2>Портрет</h2>
+        {{ a.picker('Портрет', 'portrait_id', portrait, 'portrait', {hint: 'Кадр 4:5, нейтральный фон. На сайте чёрно-белый, в цвете при наведении и на странице лектора.'}) }}
+      </section>
+      <section class="a-section">
+        <h2>О лекторе</h2>
+        {{ a.field('Биография', 'bio_ru', lecturer.bio_ru, {rows: 7, max: 800, wide: true, hint: '400–800 знаков.'}) }}
+        {{ a.field('Биография по-английски', 'bio_en', lecturer.bio_en, {rows: 4, wide: true}) }}
+        {{ a.field('Чем известен', 'facts_ru', lecturer.facts_ru | join_nl, {rows: 5, wide: true, hint: '3–5 фактов, каждый с новой строки.'}) }}
+        {{ a.field('Чем известен (по-английски)', 'facts_en', lecturer.facts_en | join_nl, {rows: 4, wide: true}) }}
+        <h3>Ссылки</h3>
+        <div data-repeater="links">
+          <div data-list>{% for x in lecturer.links %}{{ linkItem(x, loop.index0) }}{% endfor %}</div>
+          <template>{{ linkItem({}, '__i__') }}</template>
+          <button type="button" class="a-btn" data-add>Добавить ссылку</button>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div class="a-savebar">
+    <button class="a-btn primary" type="submit">Сохранить</button>
+    {% if not isNew %}<a class="a-link" href="/lektory/{{ lecturer.slug }}" target="_blank">Страница на сайте ↗</a>{% endif %}
+    <a class="a-link" href="/admin/lecturers">К списку</a>
+  </div>
+</form>
+{% if not isNew %}
+<form method="post" action="/admin/lecturers/{{ lecturer.id }}/delete" data-confirm="Удалить лектора?" class="a-danger"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-link danger" type="submit">Удалить лектора</button></form>
+{% endif %}
+{% endblock %}

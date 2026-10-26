@@ -1,0 +1,58 @@
+{
+  "name": "science-lounge",
+  "version": "1.0.0",
+  "description": "Сайт-архив и афиша лектория Science Lounge (школа «Летово»)",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test test/unit.test.js test/app.test.js",
+    "admin:create": "node scripts/create-admin.js",
+    "seed:demo": "node scripts/seed-demo.js",
+    "seed:clear": "node scripts/clear-demo.js",
+    "backup": "node scripts/backup.js",
+    "build:map": "node scripts/build-map.js",
+    "docs:screenshots": "node scripts/make-screenshots.js docs/screenshots",
+    "content:clear": "node scripts/clear-content.js",
+    "content:import": "node scripts/import-real.js",
+    "content:materials": "node scripts/import-materials.js",
+    "content:portraits": "node scripts/import-portraits.js"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "better-sqlite3": "^13.0.3",
+    "compression": "^1.8.2",
+    "express": "^4.22.3",
+    "katex": "^0.19.0",
+    "multer": "^2.4.0",
+    "nunjucks": "^3.2.4",
+    "qrcode": "^1.5.4",
+    "satori": "^0.49.1",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@fontsource-variable/eb-garamond": "^5.3.0",
+    "@fontsource-variable/golos-text": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/literata": "^5.3.0",
+    "@fontsource-variable/merriweather": "^5.3.0",
+    "@fontsource-variable/montserrat": "^5.3.0",
+    "@fontsource-variable/nunito-sans": "^5.3.0",
+    "@fontsource-variable/playfair-display": "^5.3.0",
+    "@fontsource-variable/source-sans-3": "^5.3.1",
+    "@fontsource-variable/source-serif-4": "^5.3.1",
+    "@fontsource/fira-sans": "^5.3.0",
+    "@fontsource/golos-text": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/literata": "^5.3.0",
+    "@fontsource/pt-sans": "^5.3.0",
+    "d3-geo": "^3.1.1",
+    "puppeteer-core": "^25.13.0",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  }
+}

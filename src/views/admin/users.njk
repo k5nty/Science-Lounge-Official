@@ -1,0 +1,43 @@
+{% extends "layouts/admin.njk" %}
+{% import "admin/_macros.njk" as a %}
+{% block title %}Люди{% endblock %}
+{% block content %}
+<div class="a-head"><h1>Пользователи админки</h1></div>
+<p class="muted">Редактор ведёт выпуски, лекторов, конференции, команду и фото. Администратор ещё читает обращения, меняет настройки и управляет людьми.</p>
+{% if errors | length %}<div class="a-flash err"><ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+<table class="a-table">
+  <thead><tr><th>Почта</th><th>Имя</th><th>Роль</th><th>Последний вход</th><th>Действия</th></tr></thead>
+  <tbody>
+  {% for u in users %}
+    <tr>
+      <td>{{ u.email }}{% if not u.active %} <span class="a-badge">отключён</span>{% endif %}</td>
+      <td>{{ u.name }}</td>
+      <td>
+        <form method="post" action="/admin/users/{{ u.id }}" class="a-inline"><input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="action" value="role">
+          <select name="role" data-autosubmit><option value="editor" {% if u.role == 'editor' %}selected{% endif %}>редактор</option><option value="admin" {% if u.role == 'admin' %}selected{% endif %}>администратор</option></select></form>
+      </td>
+      <td class="mono">{{ u.last_login.slice(0, 16).replace('T', ' ') if u.last_login else '—' }}</td>
+      <td class="a-actions">
+        <form method="post" action="/admin/users/{{ u.id }}" class="a-inline"><input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="action" value="password"><input type="password" name="password" placeholder="Новый пароль" minlength="10" autocomplete="new-password"><button class="a-link" type="submit">Сменить</button></form>
+        <form method="post" action="/admin/users/{{ u.id }}" class="a-inline"><input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="action" value="toggle"><button class="a-link" type="submit">{{ 'Отключить' if u.active else 'Включить' }}</button></form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<section class="a-section" style="margin-top:32px">
+  <h2>Добавить человека</h2>
+  <form method="post" action="/admin/users" class="a-form">
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+    <div class="a-grid">
+      {{ a.field('Почта', 'email', '', {type: 'email', required: true}) }}
+      {{ a.field('Имя', 'name', '') }}
+    </div>
+    <div class="a-grid">
+      <div class="a-field"><label for="role">Роль</label><select id="role" name="role"><option value="editor">редактор</option><option value="admin">администратор</option></select></div>
+      {{ a.field('Пароль', 'password', '', {type: 'password', required: true, hint: 'Не короче 10 знаков. Передайте человеку лично.'}) }}
+    </div>
+    <button class="a-btn primary" type="submit">Добавить</button>
+  </form>
+</section>
+{% endblock %}

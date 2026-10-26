@@ -1,0 +1,8 @@
+{% extends "layouts/base.njk" %}
+{% block content %}
+<div style="max-width:640px">
+  <h1 class="page-title">{{ t('thanks.h') }}</h1>
+  <p class="lead-text" style="margin-top:14px">{{ t('fb.sent_' + type) if type and type != 'photo' else t('fb.sent') }}</p>
+  <p style="margin-top:24px"><a class="btn" href="/">{{ settings.site_title }}</a></p>
+</div>
+{% endblock %}

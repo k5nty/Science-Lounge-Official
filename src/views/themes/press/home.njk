@@ -1,0 +1,108 @@
+{# press home: lead story over a 2-column grid of cards, narrow sidebar on the right. #}
+{% import "partials/macros.njk" as m with context %}
+{% import "partials/forms.njk" as f with context %}
+
+{% macro card(i) %}
+  {%- set tag = i.tags[0] -%}
+  <a class="pr-card" href="{{ url('issue', {slug: i.slug}) }}">
+    <span class="pr-thumb">{% if i.cover %}{{ picture(i.cover, {sizes: '(max-width: 640px) 44vw, (max-width: 1100px) 46vw, 440px', src: 960, alt: ''}) }}{% else %}<span class="pr-ph" aria-hidden="true">{{ pad2(i.number) }}</span>{% endif %}</span>
+    <span class="pr-kicker">{{ tagName(tag) if tag else issueNo(i.number) }}</span>
+    <h3>{{ L(i, 'title') }}</h3>
+    {% if i.lecturers | length %}<span class="pr-by">{{ 'Автор' if lang == 'ru' else 'By' }} <b>{{ i.lecturers | map_names(lang) }}</b></span>{% endif %}
+    {% set thought = L(i, 'thought') %}
+    {% if thought %}<span class="pr-ex">{{ thought }}</span>{% endif %}
+  </a>
+{% endmacro %}
+
+{% set chev %}<svg class="chev" viewBox="0 0 8 12" aria-hidden="true"><path d="M1.5 1.5 6 6l-4.5 4.5"/></svg>{% endset %}
+
+{% if lead %}
+  {% set lecturer = lead.lecturer %}
+  {% set hero = lead.cover or (lecturer.portrait if lecturer else null) %}
+  {% set boxIssue = lead if isNext else (upcomingList | first) %}
+  {% set cards = [] %}
+  {% for i in latest %}{% if isNext or i.id != lead.id %}{% set cards = (cards.push(i), cards) %}{% endif %}{% endfor %}
+  {% set others = [] %}
+  {% for i in upcomingList %}{% if not boxIssue or i.id != boxIssue.id %}{% set others = (others.push(i), others) %}{% endif %}{% endfor %}
+
+<div class="pr-home">
+  {% if hero %}
+  <figure class="pr-hero">
+    <a href="{{ url('issue', {slug: lead.slug}) }}" tabindex="-1" aria-hidden="true">{{ picture(hero, {sizes: '(max-width: 1180px) 100vw, 1180px', src: 1600, eager: true, alt: ''}) }}</a>
+    {% if lead.cover and lead.cover.credit %}<figcaption>{{ t('photo.by') }}: {{ lead.cover.credit }}</figcaption>{% endif %}
+  </figure>
+  {% endif %}
+
+  <div class="pr-cols">
+    <div class="pr-main">
+      <article class="pr-lead" aria-labelledby="lead-t">
+        <span class="pr-kicker">{{ tagName(lead.tags[0]) if lead.tags | length else (t('status.next') if isNext else t('status.last')) }}</span>
+        <h1 id="lead-t"><a href="{{ url('issue', {slug: lead.slug}) }}">{{ L(lead, 'title') }}</a></h1>
+        {% if leadHtml %}<div class="pr-deck">{{ leadHtml | safe }}</div>{% endif %}
+        <div class="pr-act">
+          {% if isNext %}
+            <a class="pr-more" href="/vypusk/{{ lead.slug }}.ics" data-goal="calendar">{{ chev | safe }}{{ t('btn.calendar') }}</a>
+            {% if lead.reg_enabled and lead.reg_url and leadStatus != 'sold_out' and leadStatus != 'cancelled' %}<a class="btn" href="{{ lead.reg_url }}" target="_blank" rel="noopener" data-goal="register">{{ t('btn.register') }}</a>{% endif %}
+          {% else %}
+            <a class="pr-more" href="{{ url('issue', {slug: lead.slug}) }}">{{ chev | safe }}{{ 'Читать' if lang == 'ru' else 'Read' }}</a>
+          {% endif %}
+          {% if leadStatus == 'cancelled' or leadStatus == 'moved' or leadStatus == 'sold_out' %}{{ m.statusLabel(leadStatus) }}{% endif %}
+          {% if lead.lecturers | length %}<span class="pr-byline">{{ 'Автор' if lang == 'ru' else 'By' }} <b>{{ lead.lecturers | map_names(lang) }}</b></span>{% endif %}
+        </div>
+      </article>
+
+      {% if cards | length %}
+      <div class="pr-grid{{ ' has-feature' if (cards | length) is odd }}">
+        {% for i in cards %}{{ card(i) }}{% endfor %}
+      </div>
+      <p class="pr-all"><a class="btn" href="{{ url('archive') }}">{{ t('btn.all_issues') }}</a></p>
+      {% endif %}
+    </div>
+
+    <aside class="pr-side" aria-label="{{ settings.site_title }}">
+      {% if boxIssue %}
+      <section class="pr-block">
+        <div class="pr-promo">
+          <span class="pr-kicker">{{ t('status.next') }}</span>
+          <time class="pr-pdate" datetime="{{ boxIssue.start_at }}">{{ fx.dl(boxIssue.start_at) }}</time>
+          <span class="pr-ptime">{{ fx.dwd(boxIssue.start_at) }}, {{ dTime(boxIssue.start_at) }}</span>
+          <a class="pr-ptitle" href="{{ url('issue', {slug: boxIssue.slug}) }}">{{ L(boxIssue, 'title') }}</a>
+          <a class="btn" href="/vypusk/{{ boxIssue.slug }}.ics" data-goal="calendar">{{ t('btn.calendar') }}</a>
+        </div>
+      </section>
+      {% endif %}
+
+      {% if others | length %}
+      <section class="pr-block">
+        <h2>{{ 'Ближайшие' if lang == 'ru' else 'Upcoming' }}</h2>
+        <ul class="pr-list">
+          {% for i in others %}
+          <li><a href="{{ url('issue', {slug: i.slug}) }}"><span class="label">{{ fx.dl(i.start_at) }}</span><b>{{ L(i, 'title') }}</b></a></li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+
+      <section class="pr-block">
+        <h2>{{ 'Подписка' if lang == 'ru' else 'Follow' }}</h2>
+        <div class="pr-follow">
+          {% if channelUrl %}<a href="{{ channelUrl }}" target="_blank" rel="noopener" data-goal="channel" aria-label="{{ t('nav.channel') }}" title="{{ t('nav.channel') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3.5 2.8 10.7l5.7 2.2 2.2 6.4 3.2-3.8 4.9 3.6z"/><path d="M8.5 12.9 21.5 3.5"/></svg></a>{% endif %}
+          <a href="/feed.xml" aria-label="{{ t('footer.rss') }}" title="{{ t('footer.rss') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="18.5" r="1.4"/><path d="M4 10.5a9.5 9.5 0 0 1 9.5 9.5M4 4.5A15.5 15.5 0 0 1 19.5 20"/></svg></a>
+          <a href="/raspisanie.ics" aria-label="{{ t('footer.cal') }}" title="{{ t('footer.cal') }}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14.5" rx="1"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></svg></a>
+        </div>
+      </section>
+
+      <section class="pr-block pr-suggest">
+        <h2>{{ t('home.suggest_h') }}</h2>
+        {{ f.suggestInline() }}
+      </section>
+    </aside>
+  </div>
+</div>
+{% else %}
+<div class="pr-empty">
+  <h1 class="page-title">{{ t('home.empty_h') }}</h1>
+  <p class="pr-deck">{{ t('home.empty_p') }}</p>
+  {% if channelUrl %}<p><a class="btn" href="{{ channelUrl }}" target="_blank" rel="noopener">{{ t('nav.channel') }}</a></p>{% endif %}
+</div>
+{% endif %}

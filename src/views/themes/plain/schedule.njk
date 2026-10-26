@@ -1,0 +1,47 @@
+{# plain schedule: months in small caps, hairline rows (date, round portrait, NAME, title, place). #}
+{% import "partials/macros.njk" as m with context %}
+
+{% macro srow(i) %}
+  {%- set mons = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'] if lang == 'ru' else ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] -%}
+  {%- set p = dShort(i.start_at).split('.') -%}
+  {%- set st = statusOf(i) -%}
+  <li class="pl-row{{ ' is-cancelled' if st == 'cancelled' }}">
+    <span class="pl-date"><span class="pl-mon">{{ mons[(p[1] | int) - 1] }}</span><span class="pl-day">{{ p[0] | int }}</span></span>
+    <span class="pl-ph">{% if i.lecturer %}{{ m.portrait(i.lecturer, {sizes: '96px', src: 480}) }}{% endif %}</span>
+    <div class="pl-txt">
+      <a class="pl-link" href="{{ url('issue', {slug: i.slug}) }}"><span class="pl-name">{{ i.lecturers | map_names(lang) }}</span><span class="pl-title">{{ L(i, 'title') }}</span></a>
+      <p class="pl-meta">{{ fx.dwd(i.start_at) }}, {{ dTime(i.start_at) }}{% if L(i, 'place') %} · {{ L(i, 'place') }}{% endif %}{% if st == 'reg_open' or st == 'sold_out' or st == 'moved' or st == 'cancelled' %} · {{ m.statusLabel(st) }}{% endif %}</p>
+    </div>
+  </li>
+{% endmacro %}
+
+{% macro months(list) %}
+  {% set curMonth = '' %}
+  {% for i in list %}
+    {% set mk = dMonthKey(i.start_at) %}
+    {% if mk != curMonth %}
+      {% if curMonth %}</ul></div>{% endif %}
+      <div class="sched-month"><h3>{{ fx.dmonth(i.start_at) }}</h3><ul class="pl-list pl-one">
+      {% set curMonth = mk %}
+    {% endif %}
+    {{ srow(i) }}
+  {% endfor %}
+  {% if curMonth %}</ul></div>{% endif %}
+{% endmacro %}
+
+<div class="sec-head"><h1 class="page-title">{{ t('sched.h') }}</h1><span class="label">{{ t('sched.tz') }}</span></div>
+
+<p class="pl-subscribe"><a class="btn" href="{{ webcal }}" data-goal="calendar-feed">{{ t('btn.subscribe') }}</a> <a class="pl-ics" href="/raspisanie.ics">.ics</a></p>
+
+{% if upcoming | length %}
+  {{ months(upcoming) }}
+{% else %}
+  <p class="empty">{{ t('sched.empty') }}</p>
+{% endif %}
+
+{% if past | length %}
+<details class="past-box" id="past-box">
+  <summary data-closed="{{ t('btn.show_past', {n: past | length}) }}" data-open="{{ t('btn.hide_past') }}">{{ t('btn.show_past', {n: past | length}) }}</summary>
+  {{ months(past) }}
+</details>
+{% endif %}

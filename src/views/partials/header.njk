@@ -1,0 +1,16 @@
+{# Default header (masthead + sticky nav). A theme can ship src/views/themes/<id>/header.njk instead. #}
+{% set sw = langSwitch() %}
+<header class="mast">
+  <div class="wrap">
+    <a class="brand" href="{{ url('home') }}"><b>Science <i>Lounge</i></b><span>{{ (settings.site_tagline_en or t('brand.tagline')) if lang == 'en' else (settings.site_tagline or t('brand.tagline')) }}</span></a>
+    <div class="mast-tools">
+      {% if channelUrl %}<a href="{{ channelUrl }}" target="_blank" rel="noopener" data-goal="channel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.9 4.2 18.6 19.6c-.2 1.1-.9 1.4-1.8.9l-5-3.7-2.4 2.3c-.3.3-.5.5-1.1.5l.4-5.1 9.3-8.4c.4-.4-.1-.6-.6-.2L6.9 13.1 2 11.6c-1.1-.3-1.1-1.1.2-1.6L21 2.7c.9-.3 1.7.2 1.4 1.5z"/></svg>{{ t('nav.channel') }}</a>{% endif %}
+      <a class="lang" href="{{ sw.href }}" hreflang="{{ sw.hreflang }}" lang="{{ sw.hreflang }}" title="{{ sw.title }}">{{ sw.label }}</a>
+    </div>
+  </div>
+</header>
+<div class="nav-row">
+  <nav class="main" aria-label="{{ t('nav.menu') }}">
+    {% for n in navItems() %}<a href="{{ n.href }}"{% if n.cta %} class="cta"{% endif %}{% if n.active %} aria-current="page"{% endif %}>{{ n.label }}</a>{% endfor %}
+  </nav>
+</div>

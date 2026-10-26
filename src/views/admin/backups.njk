@@ -1,0 +1,12 @@
+{% extends "layouts/admin.njk" %}
+{% block title %}Копии{% endblock %}
+{% block content %}
+<div class="a-head"><h1>Резервные копии</h1>
+  <form method="post" action="/admin/backups"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-btn primary" type="submit">Сделать копию сейчас</button></form></div>
+<p class="muted">Сайт сам делает копию базы и фото раз в сутки (около 03:30) и хранит {{ keepDays }} дней. Скачайте свежую копию и сохраните отдельно от сервера.</p>
+{% if backups | length %}
+<table class="a-table"><thead><tr><th>Когда (UTC)</th><th>База</th><th>Фото и файлы</th></tr></thead><tbody>
+{% for b in backups %}<tr><td class="mono">{{ b.name }}</td><td>{% if b.db %}<a href="/admin/backups/{{ b.name }}/science-lounge.db">скачать</a> <span class="muted">{{ b.db | bytes }}</span>{% else %}—{% endif %}</td><td>{% if b.media %}<a href="/admin/backups/{{ b.name }}/uploads.tar.gz">скачать</a> <span class="muted">{{ b.media | bytes }}</span>{% else %}—{% endif %}</td></tr>{% endfor %}
+</tbody></table>
+{% else %}<p class="empty">Копий пока нет.</p>{% endif %}
+{% endblock %}

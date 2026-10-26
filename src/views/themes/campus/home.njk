@@ -1,0 +1,87 @@
+{# Campus home: featured lecture + "upcoming" column, latest lectures band, speakers row, suggest box. #}
+{% import "partials/macros.njk" as m with context %}
+{% import "partials/forms.njk" as f with context %}
+{% set upWord = 'Ближайшие' if lang == 'ru' else 'Upcoming' %}
+{% set readWord = 'Читать' if lang == 'ru' else 'Read' %}
+{% set allSched = t('nav.schedule') %}
+
+{% if lead %}
+{% set lecturer = lead.lecturer %}
+{% set leadUrl = url('issue', {slug: lead.slug}) %}
+<div class="cm-top{{ ' is-solo' if not (upcomingList | length) }}">
+  <article class="cm-feature" aria-labelledby="lead-t">
+    <a class="cm-feature-media" href="{{ leadUrl }}" tabindex="-1" aria-hidden="true">
+      {% if lead.cover %}{{ picture(lead.cover, {sizes: '(max-width: 860px) 100vw, 380px', src: 960, eager: true, alt: ''}) }}
+      {% elif lecturer and lecturer.portrait %}{{ picture(lecturer.portrait, {sizes: '(max-width: 860px) 100vw, 380px', src: 960, eager: true, alt: '', cls: 'is-portrait'}) }}
+      {% else %}<span class="cm-ph">{{ issueNo(lead.number) }}</span>{% endif %}
+    </a>
+    <div class="cm-feature-body">
+      <p class="cm-kicker">{{ t('status.next') if isNext else t('status.last') }}</p>
+      <h1 id="lead-t"><a href="{{ leadUrl }}">{{ L(lead, 'title') }}</a></h1>
+      <p class="cm-when"><b>{{ fx.dl(lead.start_at) }}</b>, {{ fx.dwd(lead.start_at) }}, {{ dTime(lead.start_at) }}</p>
+      {% if L(lead, 'place') %}<p class="cm-place">{{ L(lead, 'place') }}</p>{% endif %}
+      {% if lecturer %}<p class="cm-who">{{ lead.lecturers | map_names(lang) }}</p>{% endif %}
+      {% if leadStatus == 'cancelled' or leadStatus == 'moved' or leadStatus == 'sold_out' %}<p>{{ m.statusLabel(leadStatus) }}</p>{% endif %}
+      <div class="actions">
+        {% if isNext %}
+          {% if lead.reg_enabled and lead.reg_url and leadStatus != 'sold_out' and leadStatus != 'cancelled' %}
+            <a class="btn primary" href="{{ lead.reg_url }}" target="_blank" rel="noopener" data-goal="register">{{ t('btn.register') }}</a>
+            <a class="btn" href="{{ leadUrl }}">{{ t('btn.details') }}</a>
+          {% else %}
+            <a class="btn primary" href="{{ leadUrl }}">{{ t('btn.details') }}</a>
+            <a class="btn" href="/vypusk/{{ lead.slug }}.ics" data-goal="calendar">{{ t('btn.calendar') }}</a>
+          {% endif %}
+        {% else %}
+          <a class="btn primary" href="{{ leadUrl }}">{{ t('btn.read') }}</a>
+          <a class="btn" href="{{ url('archive') }}">{{ t('btn.all_issues') }}</a>
+        {% endif %}
+      </div>
+    </div>
+  </article>
+
+  {% if upcomingList | length %}
+  <aside class="cm-next" aria-labelledby="cm-next-h">
+    <div class="cm-head"><h2 id="cm-next-h">{{ upWord }}</h2><a href="{{ url('schedule') }}">{{ allSched }} →</a></div>
+    <ul class="cm-up">
+      {% for i in upcomingList %}
+      <li>
+        <a href="{{ url('issue', {slug: i.slug}) }}">
+          <span class="cm-date"><b>{{ dShort(i.start_at).substring(0, 2) | int }}</b><i>{{ fx.dmonth(i.start_at).substring(0, 3) }}</i></span>
+          <span class="cm-up-text"><span class="cm-up-t">{{ L(i, 'title') }}</span><span class="cm-up-m">{{ i.lecturers | map_names(lang) }} · {{ dTime(i.start_at) }}</span></span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </aside>
+  {% endif %}
+</div>
+{% else %}
+<section class="cm-empty">
+  <h1 class="page-title">{{ t('home.empty_h') }}</h1>
+  <p>{{ t('home.empty_p') }}</p>
+  {% if channelUrl %}<p><a class="btn primary" href="{{ channelUrl }}" target="_blank" rel="noopener">{{ t('nav.channel') }}</a></p>{% endif %}
+</section>
+{% endif %}
+
+{% if latest | length %}
+<section class="cm-band" aria-labelledby="cm-latest-h">
+  <div class="cm-head"><h2 id="cm-latest-h">{{ t('home.latest') }}</h2></div>
+  <div class="cards">
+    {% for i in latest %}
+    <a class="card" href="{{ url('issue', {slug: i.slug}) }}">
+      <div class="card-photo">{% if i.cover %}{{ picture(i.cover, {sizes: '(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 372px', src: 480, alt: ''}) }}{% endif %}</div>
+      <span class="fmt">{{ readWord }}</span>
+      <div class="top"><span class="n mono">{{ issueNo(i.number) }}</span><span class="label">{{ fx.dl(i.start_at) }}</span></div>
+      <h3>{{ L(i, 'title') }}</h3>
+      {% if i.lecturer %}<span class="by">{{ i.lecturers | map_names(lang) }}</span>{% endif %}
+    </a>
+    {% endfor %}
+  </div>
+  <p class="cm-more"><a href="{{ url('archive') }}">{{ t('btn.all_issues') }} →</a></p>
+</section>
+{% endif %}
+
+<section class="cm-suggest" aria-labelledby="cm-suggest-h">
+  <h2 id="cm-suggest-h">{{ t('home.suggest_h') }}</h2>
+  <div>{{ f.suggestInline() }}</div>
+</section>

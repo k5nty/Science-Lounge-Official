@@ -1,0 +1,36 @@
+{# press archive: search line, tag tabs, three-column card grid. #}
+{% macro card(i) %}
+  {%- set tag = i.tags[0] -%}
+  <a class="pr-card" href="{{ url('issue', {slug: i.slug}) }}">
+    <span class="pr-thumb">{% if i.cover %}{{ picture(i.cover, {sizes: '(max-width: 640px) 44vw, (max-width: 1100px) 46vw, 380px', src: 960, alt: ''}) }}{% else %}<span class="pr-ph" aria-hidden="true">{{ pad2(i.number) }}</span>{% endif %}</span>
+    <span class="pr-kicker">{{ tagName(tag) if tag else issueNo(i.number) }}</span>
+    <h3>{{ L(i, 'title') }}</h3>
+    {% if i.lecturers | length %}<span class="pr-by">{{ 'Автор' if lang == 'ru' else 'By' }} <b>{{ i.lecturers | map_names(lang) }}</b></span>{% endif %}
+    {% set thought = L(i, 'thought') %}
+    {% if thought %}<span class="pr-ex">{{ thought }}</span>{% endif %}
+  </a>
+{% endmacro %}
+
+<div class="sec-head"><h1 class="page-title">{{ t('archive.h') }}</h1><span class="label">{{ t('archive.count', {n: totalCount}) }}{% if listeners %} · {{ t('issue.listeners', {n: listeners}) }}{% endif %}</span></div>
+
+<div class="tools">
+  <form method="get" action="{{ url('archive') }}" role="search">
+    {% if tag %}<input type="hidden" name="tag" value="{{ tag }}">{% endif %}
+    <input type="search" name="q" id="arch-q" value="{{ q }}" placeholder="{{ t('archive.search') }}" aria-label="{{ t('archive.search') }}" autocomplete="off">
+  </form>
+  <div class="chips" role="group" aria-label="Tags" id="arch-tags">
+    <a class="chip" href="{{ url('archive') }}" data-tag="" {% if not tag %}aria-current="true"{% endif %}>{{ t('archive.all') }}</a>
+    {% for tg in tags %}<a class="chip" href="{{ url('archive') }}?tag={{ tg | urlencode }}" data-tag="{{ tg }}" {% if tag == tg %}aria-current="true"{% endif %}>{{ tagName(tagFull.get(tg)) }}</a>{% endfor %}
+  </div>
+</div>
+
+{% if issues | length %}
+<div class="pr-grid pr-grid-3" id="arch-list">
+  {% for i in issues %}
+    <div data-slug="{{ i.slug }}" data-tags="{% for tg in i.tags %}{{ tagKey(tg) }}{{ '|' if not loop.last }}{% endfor %}" style="display:contents">{{ card(i) }}</div>
+  {% endfor %}
+</div>
+<p class="empty" id="arch-none" hidden>{{ t('archive.none') }}</p>
+{% else %}
+<p class="empty" id="arch-none">{{ t('archive.none') }}</p>
+{% endif %}

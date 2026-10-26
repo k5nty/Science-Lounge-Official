@@ -1,0 +1,48 @@
+{% extends "layouts/base.njk" %}
+{% import "partials/macros.njk" as m with context %}
+
+{% macro rows(list) %}
+  {% set curMonth = '' %}
+  {% for i in list %}
+    {% set mk = dMonthKey(i.start_at) %}
+    {% if mk != curMonth %}
+      {% if curMonth %}</div>{% endif %}
+      <div class="sched-month"><h3>{{ fx.dmonth(i.start_at) }}</h3>
+      {% set curMonth = mk %}
+    {% endif %}
+    {% set st = statusOf(i) %}
+    <a class="row{{ ' is-cancelled' if st == 'cancelled' }}" href="{{ url('issue', {slug: i.slug}) }}">
+      <span class="d">{{ dShort(i.start_at) }}<small>{{ fx.dwd(i.start_at) }} · {{ dTime(i.start_at) }}</small></span>
+      <span class="no">{{ issueNo(i.number) }}</span>
+      <span><span class="t">{{ L(i, 'title') }}</span><span class="meta">{{ i.lecturers | map_names(lang) }}{% if L(i, 'place') %} · {{ L(i, 'place') }}{% endif %}</span></span>
+      <span class="st">{{ m.statusLabel(st) }}</span>
+    </a>
+  {% endfor %}
+  {% if curMonth %}</div>{% endif %}
+{% endmacro %}
+
+{% block content %}
+{% if themePart('schedule') %}
+  {% include themePart('schedule') %}
+{% else %}
+<div class="sec-head"><h1 class="page-title">{{ t('sched.h') }}</h1><span class="label">{{ t('sched.tz') }}</span></div>
+
+<div class="sub-bar">
+  <a class="btn" href="{{ webcal }}" data-goal="calendar-feed">{{ t('btn.subscribe') }}</a>
+  <span class="muted" style="font-size:13.5px">Google, Apple, Yandex · <a href="/raspisanie.ics">.ics</a></span>
+</div>
+
+{% if upcoming | length %}
+  {{ rows(upcoming) }}
+{% else %}
+  <p class="empty">{{ t('sched.empty') }}</p>
+{% endif %}
+
+{% if past | length %}
+<details class="past-box" id="past-box">
+  <summary data-closed="{{ t('btn.show_past', {n: past | length}) }}" data-open="{{ t('btn.hide_past') }}">{{ t('btn.show_past', {n: past | length}) }}</summary>
+  {{ rows(past) }}
+</details>
+{% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,43 @@
+{# Campus schedule: a table-like list, month bands, date block on the left, status tag on the right. #}
+{% import "partials/macros.njk" as m with context %}
+
+{% macro cmRows(list) %}
+  {% set curMonth = '' %}
+  {% for i in list %}
+    {% set mk = dMonthKey(i.start_at) %}
+    {% if mk != curMonth %}
+      {% if curMonth %}</div>{% endif %}
+      <div class="sched-month"><h3>{{ fx.dmonth(i.start_at) }}</h3>
+      {% set curMonth = mk %}
+    {% endif %}
+    {% set st = statusOf(i) %}
+    <a class="row{{ ' is-cancelled' if st == 'cancelled' }}" href="{{ url('issue', {slug: i.slug}) }}">
+      <span class="d"><b>{{ dShort(i.start_at).substring(0, 2) | int }}</b><i>{{ fx.dmonth(i.start_at).substring(0, 3) }}</i></span>
+      <span class="tm">{{ fx.dwd(i.start_at) }}, {{ dTime(i.start_at) }}</span>
+      <span class="no">{{ issueNo(i.number) }}</span>
+      <span class="ti"><span class="t">{{ L(i, 'title') }}</span><span class="meta">{{ i.lecturers | map_names(lang) }}{% if L(i, 'place') %} · {{ L(i, 'place') }}{% endif %}</span></span>
+      <span class="st">{{ m.statusLabel(st) }}</span>
+    </a>
+  {% endfor %}
+  {% if curMonth %}</div>{% endif %}
+{% endmacro %}
+
+<div class="sec-head"><h1 class="page-title">{{ t('sched.h') }}</h1><span class="label">{{ t('sched.tz') }}</span></div>
+
+<div class="sub-bar">
+  <a class="btn" href="{{ webcal }}" data-goal="calendar-feed">{{ t('btn.subscribe') }}</a>
+  <a class="cm-textlink" href="/raspisanie.ics">.ics</a>
+</div>
+
+{% if upcoming | length %}
+  <div class="cm-sched">{{ cmRows(upcoming) }}</div>
+{% else %}
+  <p class="empty">{{ t('sched.empty') }}</p>
+{% endif %}
+
+{% if past | length %}
+<details class="past-box" id="past-box">
+  <summary data-closed="{{ t('btn.show_past', {n: past | length}) }}" data-open="{{ t('btn.hide_past') }}">{{ t('btn.show_past', {n: past | length}) }}</summary>
+  <div class="cm-sched">{{ cmRows(past) }}</div>
+</details>
+{% endif %}

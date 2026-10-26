@@ -1,0 +1,48 @@
+{
+  "tags": {
+    "Физика": "physics", "Механика": "mechanics", "Математика": "mathematics", "Биология": "biology",
+    "Информатика": "computer science", "Философия": "philosophy", "Химия": "chemistry", "Науки о Земле": "earth science"
+  },
+  "place": "Letovo School, main lecture hall",
+  "lecturers": {
+    "belov": { "name": "Andrey Belov", "role": "Research fellow, scanning probe microscopy lab", "area": "Physics",
+      "bio": "Has worked with scanning tunnelling microscopes for twenty years: builds the instruments, teaches students to sharpen the tips, and argues about whether a picture of an atom can be called a photograph.",
+      "facts": ["Built his first microscope as a student, from parts of decommissioned equipment", "Runs a nanophysics practical for third-year students", "Believes a good experimentalist is half a plumber"] },
+    "lebedeva": { "name": "Maria Lebedeva", "role": "Associate professor, Department of Hydrodynamics", "area": "Mechanics",
+      "bio": "Works on numerical simulation of flows, from the air around a wing to mixing in chemical reactors. Writes popular science texts about why water is so complicated.",
+      "facts": ["Simulates flows on a supercomputer", "Teaches a course on continuum mechanics"] },
+    "kotova": { "name": "Irina Kotova", "role": "Neurobiologist, perception lab", "area": "Biology",
+      "bio": "Studies how the brain completes the picture of the world from incomplete data. Runs experiments with visual illusions and recordings of brain activity.",
+      "facts": ["Runs EEG and eye-tracking experiments", "Collects visual illusions"] },
+    "orlov": { "name": "Dmitry Orlov", "role": "Researcher, quantum information", "area": "Physics",
+      "bio": "Develops error-correction methods for superconducting qubits. Explains quantum computing without the words 'both 0 and 1 at once'.",
+      "facts": ["Works with superconducting-qubit processors", "Leads a seminar for olympiad students"] },
+    "remizov": { "name": "Pavel Remizov", "role": "Lecturer, philosophy of technology", "area": "Philosophy",
+      "bio": "Studies who is responsible for the decisions of automated systems. Teaches technology ethics to future engineers.",
+      "facts": ["Author of the course 'Ethics for Engineers'", "Believes philosophy should be taught together with programming"] },
+    "grishina": { "name": "Elena Grishina", "role": "Materials scientist, polymer lab", "area": "Chemistry",
+      "bio": "Creates polymers that close cracks without human help. Will bring samples to the talk that you can cut and watch grow back together.",
+      "facts": ["Works on self-healing coatings", "Promised a live demonstration"] },
+    "malinin": { "name": "Sergey Malinin", "role": "Geophysicist, climate modelling", "area": "Earth science",
+      "bio": "Builds numerical models of the atmosphere and the ocean and checks how well they predicted the past.",
+      "facts": ["Takes part in climate-model intercomparison", "Will explain how to read forecasts and their uncertainty"] }
+  },
+  "issues": {
+    "1": { "title": "How to see an atom if it cannot be seen", "announce": "Light is too coarse a tool to see an atom. How physicists get around this limit with a needle, a current and quantum mechanics.", "thought": "To see an atom you do not have to illuminate it: it is enough to measure the current leaking through a gap one nanometre wide." },
+    "2": { "title": "Why turbulence is still unsolved", "announce": "The equations of fluid motion were written almost two hundred years ago. Why a million dollars is still offered for proving a single property of these equations.", "thought": "We can write down the laws of water motion, but we cannot prove that these laws always have a sensible solution." },
+    "3": { "title": "The brain that guesses", "announce": "Why we see things that are not there and miss what is in front of our eyes. Perception as a constant testing of guesses.", "thought": "The brain does not record the world: it keeps guessing it and corrects the guess by its errors." },
+    "4": { "title": "What a quantum computer can do today", "announce": "Without the words 'both 0 and 1': what a qubit is, why it makes errors and when quantum computers will become useful.", "thought": "The main task of a quantum computer today is not to compute faster but to learn not to make mistakes." },
+    "5": { "title": "Who is responsible for a machine's decision", "announce": "If an autopilot makes a mistake, is the driver to blame, the programmer, or nobody? A talk about where human responsibility ends.", "thought": "The more autonomous a system is, the harder it is to find the person responsible for its mistake, and this is not only a task for lawyers." },
+    "6": { "title": "Materials that heal themselves", "announce": "Plastic that closes a scratch overnight and concrete whose cracks are sealed by bacteria. The speaker brings samples: you can cut them and watch them grow back together.", "thought": "" },
+    "7": { "title": "How climate is calculated", "announce": "What a climate model is made of, how it is tested against the past and how to read forecasts together with their uncertainty.", "thought": "" }
+  },
+  "conference": {
+    "place": "Letovo School",
+    "intro": "A three-day conference. Poster talks by school students from six regions of Russia; the jury consists of university professors. Sample text: replace it with the real one in the admin.",
+    "program": ["Day 1", "Day 2", "Day 3"]
+  },
+  "team": {
+    "Владимир Назаров": { "name": "Vladimir Nazarov", "role": "Co-founder" },
+    "Второй сооснователь": { "name": "Second co-founder", "role": "Co-founder", "bio": "Name, photo and a few lines about themselves are added in the admin." }
+  }
+}

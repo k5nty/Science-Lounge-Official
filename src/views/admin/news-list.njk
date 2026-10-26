@@ -1,0 +1,27 @@
+{% extends "layouts/admin.njk" %}
+{% block title %}Новости{% endblock %}
+{% block content %}
+<div class="a-head"><h1>Новости науки</h1><a class="a-btn primary" href="/admin/news/new">Добавить новость</a></div>
+<form method="post" action="/admin/news/refresh">
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <p class="muted">Автоподбор: <b>{{ 'включён' if autoOn else 'выключен' }}</b> (<a href="/admin/settings">настройки</a>).{% if lastRun %} Последний запуск {{ dLong(lastRun.at) }}:
+    {% for r in lastRun.results %}{{ r.name }} {{ ('+' ~ r.added) if r.ok else 'ошибка' }}{{ ', ' if not loop.last }}{% endfor %}.{% else %} Ещё не запускался.{% endif %}
+    <button class="a-btn" type="submit">Обновить сейчас</button></p>
+</form>
+{% if items | length %}
+<table class="a-table">
+  <thead><tr><th>Дата</th><th>Заголовок</th><th>Источник</th><th>EN</th><th>Статус</th></tr></thead>
+  <tbody>
+  {% for n in items %}
+    <tr>
+      <td class="mono">{{ dLong(n.published_at) }}</td>
+      <td><a href="/admin/news/{{ n.id }}"><b>{{ n.title_ru or n.title_en }}</b></a>{% if n.auto %} <span class="a-badge">авто, {{ 'ru' if n.title_ru else 'en' }}</span>{% endif %}{% if n.is_demo %} <span class="a-badge">демо</span>{% endif %}</td>
+      <td>{% if n.source_url %}<a href="{{ n.source_url }}" target="_blank" rel="noopener">{{ n.source_name or (n.source_url | hostname) }} ↗</a>{% else %}—{% endif %}</td>
+      <td>{% if n.title_en %}<span class="a-badge ok">EN</span>{% else %}<span class="a-badge">нет</span>{% endif %}</td>
+      <td>{% if n.published %}<span class="a-badge ok">на сайте</span>{% else %}<span class="a-badge">скрыта</span>{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}<p class="empty">Новостей пока нет. Добавьте первую: заголовок, 2–3 предложения своими словами и ссылку на источник.</p>{% endif %}
+{% endblock %}
