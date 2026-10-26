@@ -1,0 +1,40 @@
+{# Campus archive: filter column on the left (search + topics as a plain list), lecture cards on the right. #}
+{% import "partials/macros.njk" as m with context %}
+{% set readWord = 'Читать' if lang == 'ru' else 'Read' %}
+{% set topicsWord = 'Темы' if lang == 'ru' else 'Topics' %}
+
+<div class="sec-head"><h1 class="page-title">{{ t('archive.h') }}</h1><span class="label">{{ t('archive.count', {n: totalCount}) }}{% if listeners %} · {{ t('issue.listeners', {n: listeners}) }}{% endif %}</span></div>
+
+<div class="cm-arch">
+  <aside class="cm-filters">
+    <form method="get" action="{{ url('archive') }}" role="search">
+      {% if tag %}<input type="hidden" name="tag" value="{{ tag }}">{% endif %}
+      <input type="search" name="q" id="arch-q" value="{{ q }}" placeholder="{{ "Поиск по лекциям" if lang == "ru" else "Search lectures" }}" aria-label="{{ t('archive.search') }}" autocomplete="off">
+    </form>
+    <h2 class="cm-filters-h">{{ topicsWord }}</h2>
+    <div class="chips" role="group" aria-label="Tags" id="arch-tags">
+      <a class="chip" href="{{ url('archive') }}" data-tag="" {% if not tag %}aria-current="true"{% endif %}>{{ t('archive.all') }}</a>
+      {% for tg in tags %}<a class="chip" href="{{ url('archive') }}?tag={{ tg | urlencode }}" data-tag="{{ tg }}" {% if tag == tg %}aria-current="true"{% endif %}>{{ tagName(tagFull.get(tg)) }}</a>{% endfor %}
+    </div>
+  </aside>
+  <div class="cm-results">
+    {% if issues | length %}
+    <div class="cards" id="arch-list">
+      {% for i in issues %}
+        <div data-slug="{{ i.slug }}" data-tags="{% for tg in i.tags %}{{ tagKey(tg) }}{{ '|' if not loop.last }}{% endfor %}" style="display:contents">
+          <a class="card" href="{{ url('issue', {slug: i.slug}) }}">
+            <div class="card-photo">{% if i.cover %}{{ picture(i.cover, {sizes: '(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px', src: 480, alt: ''}) }}{% endif %}</div>
+            <span class="fmt">{{ readWord }}</span>
+            <div class="top"><span class="n mono">{{ issueNo(i.number) }}</span><span class="label">{{ fx.dl(i.start_at) }}</span></div>
+            <h3>{{ L(i, 'title') }}</h3>
+            {% if i.lecturer %}<span class="by">{{ i.lecturers | map_names(lang) }}</span>{% endif %}
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+    <p class="empty" id="arch-none" hidden>{{ t('archive.none') }}</p>
+    {% else %}
+    <p class="empty" id="arch-none">{{ t('archive.none') }}</p>
+    {% endif %}
+  </div>
+</div>

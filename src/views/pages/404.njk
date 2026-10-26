@@ -1,0 +1,13 @@
+{% extends "layouts/base.njk" %}
+{% import "partials/macros.njk" as m with context %}
+{% block content %}
+<div class="notfound">
+  <div class="issue-no" aria-hidden="true"><small>№</small>??</div>
+  <h1 style="font-size:clamp(28px,4vw,42px);margin-top:16px">{{ t('notfound.h') }}</h1>
+  <p class="lead-text">{{ t('notfound.p') }}{% if next %} «{{ next.title_ru }}», {{ dLong(next.start_at) }}.{% endif %}</p>
+  <div class="actions" style="margin-top:22px">
+    {% if next %}<a class="btn primary" href="/vypusk/{{ next.slug }}">{{ t('notfound.to_next') }}</a>{% endif %}
+    <a class="btn" href="/vypuski">{{ t('btn.all_issues') }}</a>
+  </div>
+</div>
+{% endblock %}

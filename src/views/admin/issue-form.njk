@@ -1,0 +1,270 @@
+{% extends "layouts/admin.njk" %}
+{% import "admin/_macros.njk" as a %}
+{% block title %}{{ 'Новый выпуск' if isNew else 'Выпуск ' + issueNo(issue.number) }}{% endblock %}
+
+{% macro ideaItem(x, i) %}
+<div class="a-rep-item" data-item>
+  <div class="a-rep-head"><b>Идея <span data-n>{{ (i | int) + 1 if i != '__i__' else '' }}</span></b>
+    <span class="a-rep-tools"><button type="button" data-up title="Выше">↑</button><button type="button" data-down title="Ниже">↓</button><button type="button" data-remove title="Удалить">×</button></span></div>
+  <div class="a-field"><label>Подзаголовок</label><input type="text" name="ideas[{{ i }}][h]" value="{{ x.h }}" maxlength="200" placeholder="Короткая мысль, одна строка"></div>
+  <div class="a-field"><label>Текст идеи</label><textarea name="ideas[{{ i }}][body]" rows="6" data-count="1500" placeholder="1–3 абзаца. Абзацы разделяйте пустой строкой. **жирный**, *курсив*, [ссылка](https://…), формула $E=mc^2$">{{ x.body }}</textarea>
+    <span class="a-hint">1–3 абзаца, примерно до 1500 знаков. Пустая строка — новый абзац.</span></div>
+  <div class="a-two">
+    <div class="a-field"><label>Цитата лектора на полях <span class="a-opt">необязательно</span></label><textarea name="ideas[{{ i }}][quote]" rows="2" maxlength="400" data-count="200">{{ x.quote }}</textarea></div>
+    <div class="a-field"><label>Чья цитата</label><input type="text" name="ideas[{{ i }}][quote_by]" value="{{ x.quote_by }}" maxlength="120" placeholder="Если пусто — имя лектора"></div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro termItem(x, i) %}
+<div class="a-rep-item row" data-item>
+  <div class="a-field"><label>Термин</label><input type="text" name="terms[{{ i }}][term]" value="{{ x.term }}" maxlength="120"></div>
+  <div class="a-field"><label>Как встречается в тексте <span class="a-opt">необязательно</span></label><input type="text" name="terms[{{ i }}][match]" value="{{ x.match }}" maxlength="200" placeholder="формы через запятую; * в конце = любое окончание"></div>
+  <div class="a-field wide"><label>Определение</label><textarea name="terms[{{ i }}][def]" rows="2" maxlength="400" data-count="200">{{ x.def }}</textarea></div>
+  <span class="a-rep-tools"><button type="button" data-remove title="Удалить">×</button></span>
+</div>
+{% endmacro %}
+
+{% macro qaItem(x, i) %}
+<div class="a-rep-item" data-item>
+  <div class="a-rep-head"><b>Вопрос <span data-n>{{ (i | int) + 1 if i != '__i__' else '' }}</span></b>
+    <span class="a-rep-tools"><button type="button" data-up title="Выше">↑</button><button type="button" data-down title="Ниже">↓</button><button type="button" data-remove title="Удалить">×</button></span></div>
+  <div class="a-field"><label>Вопрос из зала</label><input type="text" name="qa[{{ i }}][q]" value="{{ x.q }}" maxlength="400"></div>
+  <div class="a-field"><label>Ответ лектора</label><textarea name="qa[{{ i }}][a]" rows="3" maxlength="2000" data-count="800">{{ x.a }}</textarea></div>
+</div>
+{% endmacro %}
+
+{% macro readItem(x, i) %}
+<div class="a-rep-item row" data-item>
+  <div class="a-field"><label>Что почитать или посмотреть</label><input type="text" name="reads[{{ i }}][title]" value="{{ x.title }}" maxlength="300"></div>
+  <div class="a-field"><label>Ссылка <span class="a-opt">необязательно</span></label><input type="text" name="reads[{{ i }}][url]" value="{{ x.url }}" maxlength="500" placeholder="https://"></div>
+  <span class="a-rep-tools"><button type="button" data-remove title="Удалить">×</button></span>
+</div>
+{% endmacro %}
+
+{% macro photoItem(p, isCover) %}
+<li class="a-photo" data-photo data-id="{{ p.id }}">
+  <div class="a-photo-img"><img src="{{ p.thumb }}" alt=""></div>
+  <div class="a-photo-fields">
+    <input type="hidden" name="photos[]" value="{{ p.id }}">
+    <div class="a-field"><label>Что на фото (alt, обязательно)</label><input type="text" name="photo_meta[m{{ p.id }}][alt]" value="{{ p.alt }}" maxlength="300" placeholder="Например: Андрей Белов показывает иглу микроскопа"></div>
+    <div class="a-two">
+      <div class="a-field"><label>Автор снимка</label><input type="text" name="photo_meta[m{{ p.id }}][credit]" value="{{ p.credit }}" maxlength="150"></div>
+      <div class="a-field"><label>Согласие на публикацию</label>
+        <select name="photo_meta[m{{ p.id }}][consent]" data-consent>
+          <option value="pending" {% if p.consent == 'pending' %}selected{% endif %}>не проверено (не показывать)</option>
+          <option value="yes" {% if p.consent == 'yes' %}selected{% endif %}>да, согласие получено</option>
+          <option value="general" {% if p.consent == 'general' %}selected{% endif %}>общий план, лиц не видно</option>
+          <option value="no" {% if p.consent == 'no' %}selected{% endif %}>нет (не публиковать)</option>
+        </select></div>
+    </div>
+    <div class="a-photo-tools">
+      <label class="a-check small"><input type="radio" name="cover_id" value="{{ p.id }}" {% if isCover %}checked{% endif %}><span>Обложка</span></label>
+      <button type="button" data-up>↑</button><button type="button" data-down>↓</button><button type="button" data-remove>Убрать</button>
+    </div>
+  </div>
+</li>
+{% endmacro %}
+
+{% block content %}
+{% set vis = (issue.publish_state == 'published') or (issue.publish_state == 'scheduled' and issue.publish_at and issue.publish_at <= nowIso) %}
+<form method="post" action="{{ '/admin/issues' if isNew else '/admin/issues/' + issue.id }}" class="a-form issue-form" data-guard novalidate>
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <div class="a-head">
+    <h1>{{ 'Новый выпуск' if isNew else issueNo(issue.number) + ' · ' + issue.title_ru }}</h1>
+    {% if not isNew %}<span>{{ a.stateBadge(issue.publish_state, vis) }}</span>{% endif %}
+  </div>
+  {% if errors | length %}<div class="a-flash err"><ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+
+  <div class="a-layout">
+    <div class="a-col">
+
+      <section class="a-section" id="s-main">
+        <h2>Основное</h2>
+        <div class="a-grid">
+          {{ a.field('Номер выпуска', 'number', issue.number, {type: 'number', min: 1, hint: 'Сквозной: № 01, № 02…'}) }}
+          {{ a.field('Адрес страницы (необязательно)', 'slug', issue.slug, {hint: 'Если пусто, соберётся из номера и темы: /vypusk/05-kvantovye-tochki'}) }}
+        </div>
+        {{ a.field('Тема лекции', 'title_ru', issue.title_ru, {required: true, max: 120, wide: true, hint: 'Одна строка, до 120 знаков. Живым языком, без «Введение в…».'}) }}
+        {{ a.field('Тема по-английски', 'title_en', issue.title_en, {wide: true, hint: 'Нужна для английской версии сайта.'}) }}
+        <div class="a-grid">
+          {{ a.field('Дата', 'date', dDateInput(issue.start_at), {type: 'date', required: true}) }}
+          {{ a.field('Время начала (московское)', 'time', (dLocalInput(issue.start_at).slice(11) if issue.start_at else '17:30'), {type: 'time', required: true}) }}
+        </div>
+        <div class="a-grid">
+          {{ a.field('Место', 'place_ru', issue.place_ru, {max: 150, hint: 'Например: Школа «Летово», большой лекционный зал'}) }}
+          {{ a.field('Место по-английски', 'place_en', issue.place_en) }}
+        </div>
+        <fieldset class="a-field">
+          <legend>Лектор (можно несколько)</legend>
+          {% if lecturers | length %}
+          <div class="a-checks">
+            {% for l in lecturers %}<label class="a-check small"><input type="checkbox" name="lecturers" value="{{ l.id }}" {% if l.id in selectedLecturers %}checked{% endif %}><span>{{ l.name_ru }}</span></label>{% endfor %}
+          </div>
+          {% else %}<p class="a-hint">Лекторов ещё нет. <a href="/admin/lecturers/new" target="_blank">Добавьте лектора</a> и обновите страницу.</p>{% endif %}
+        </fieldset>
+        {{ a.field('Области (теги)', 'tags', issue.tags | join(', '), {wide: true, hint: 'Через запятую: физика (physics), биология (biology). В скобках перевод для английской версии, он необязателен. Теги нужны для фильтра в архиве и блока «Похожие выпуски».'}) }}
+        <div class="a-field">
+          <label for="f-status_flag">Особая отметка</label>
+          <select id="f-status_flag" name="status_flag">
+            <option value="" {% if not issue.status_flag %}selected{% endif %}>нет</option>
+            <option value="moved" {% if issue.status_flag == 'moved' %}selected{% endif %}>перенесено</option>
+            <option value="cancelled" {% if issue.status_flag == 'cancelled' %}selected{% endif %}>отменено</option>
+            <option value="sold_out" {% if issue.status_flag == 'sold_out' %}selected{% endif %}>мест нет</option>
+          </select>
+          <span class="a-hint">Показывается в расписании и на странице выпуска. Лекция сама становится «прошедшей» через 3 часа после начала.</span>
+        </div>
+      </section>
+
+      <section class="a-section" id="s-announce">
+        <h2>Анонс</h2>
+        {{ a.field('О чём будет лекция', 'announce_ru', issue.announce_ru, {rows: 5, max: 600, wide: true, hint: 'До 600 знаков. Показывается на главной и в афише, пока лекция не прошла.'}) }}
+        {{ a.field('Анонс по-английски', 'announce_en', issue.announce_en, {rows: 3, wide: true}) }}
+        <div class="a-grid">
+          <div class="a-field">{{ a.check('Показывать кнопку «Регистрация»', 'reg_enabled', issue.reg_enabled, 'Нужна ссылка на форму регистрации.') }}</div>
+          {{ a.field('Ссылка на регистрацию', 'reg_url', issue.reg_url, {ph: 'https://'}) }}
+        </div>
+      </section>
+
+      <section class="a-section" id="s-material">
+        <h2>Материал после лекции</h2>
+        {{ a.field('Главная мысль одной фразой', 'thought_ru', issue.thought_ru, {max: 220, wide: true, rows: 2, hint: 'Это крупная цитата-лид и строка в карточке выпуска. До 220 знаков.'}) }}
+        {{ a.field('Главная мысль по-английски', 'thought_en', issue.thought_en, {wide: true}) }}
+
+        <h3>Конспект: ключевые идеи <span class="a-opt">3–7 штук</span></h3>
+        <p class="a-hint">Формат «ключевые идеи», не стенограмма. У каждой идеи подзаголовок и 1–3 абзаца. Цитату лектора на полях добавляйте не больше чем к трём идеям.</p>
+        <div data-repeater="ideas">
+          <div data-list>{% for x in issue.ideas %}{{ ideaItem(x, loop.index0) }}{% endfor %}</div>
+          <template>{{ ideaItem({}, '__i__') }}</template>
+          <button type="button" class="a-btn" data-add>Добавить идею</button>
+        </div>
+
+        <h3>Термины <span class="a-opt">необязательно</span></h3>
+        <p class="a-hint">Слово в тексте получает подсказку при наведении или касании. Первое вхождение в конспекте подсвечивается само.</p>
+        <div data-repeater="terms">
+          <div data-list>{% for x in issue.terms %}{{ termItem(x, loop.index0) }}{% endfor %}</div>
+          <template>{{ termItem({}, '__i__') }}</template>
+          <button type="button" class="a-btn" data-add>Добавить термин</button>
+        </div>
+
+        <h3>Вопросы из зала <span class="a-opt">3–5 пар</span></h3>
+        <div data-repeater="qa">
+          <div data-list>{% for x in issue.qa %}{{ qaItem(x, loop.index0) }}{% endfor %}</div>
+          <template>{{ qaItem({}, '__i__') }}</template>
+          <button type="button" class="a-btn" data-add>Добавить вопрос</button>
+        </div>
+      </section>
+
+      <section class="a-section" id="s-video">
+        <h2>Видео</h2>
+        <p class="a-hint">Блок скрыт на сайте, если ссылок нет. Основная площадка — VK Видео или Rutube; YouTube — дополнительно. Можно загрузить нарезку файлом MP4/WebM.</p>
+        <div class="a-grid">
+          <div class="a-field"><label for="f-video_cut_url">Нарезка «главное за 3–5 минут»</label>
+            <input type="text" id="f-video_cut_url" name="video_cut_url" value="{{ issue.video_cut_url }}" placeholder="https://vkvideo.ru/video-…">
+            <label class="a-btn small">Загрузить файл<input type="file" accept="video/mp4,video/webm" hidden data-video-upload="f-video_cut_url"></label></div>
+          {{ a.field('Длительность нарезки', 'video_cut_len', issue.video_cut_len, {ph: '4:12'}) }}
+        </div>
+        <div class="a-grid">
+          <div class="a-field"><label for="f-video_full_url">Полная запись</label>
+            <input type="text" id="f-video_full_url" name="video_full_url" value="{{ issue.video_full_url }}" placeholder="https://rutube.ru/video/…">
+            <label class="a-btn small">Загрузить файл<input type="file" accept="video/mp4,video/webm" hidden data-video-upload="f-video_full_url"></label></div>
+          {{ a.field('Длительность записи', 'video_full_len', issue.video_full_len, {ph: '1:02:40'}) }}
+        </div>
+      </section>
+
+      <section class="a-section" id="s-photos">
+        <h2>Фото</h2>
+        <p class="a-hint">Обложка — лучший кадр с лекции, горизонтальный, от 1600 px по ширине. Галерея 6–20 снимков, минимум один с лектором и организаторами. Загружайте пачкой прямо с телефона: размеры, WebP/AVIF и удаление геометок делает сервер. У каждого фото нужно описание и решение о согласии.</p>
+        <div class="a-photos" data-photos data-purpose="photo">
+          <div class="a-photo-bar">
+            <label class="a-btn primary">Загрузить фото<input type="file" accept="image/*" multiple hidden></label>
+            <select data-bulk-consent aria-label="Согласие для всех">
+              <option value="">Согласие для всех фото…</option>
+              <option value="yes">да, согласие получено</option>
+              <option value="general">общий план, лиц не видно</option>
+              <option value="pending">не проверено</option>
+            </select>
+            <span class="a-status" data-status></span>
+          </div>
+          <ul class="a-photo-list" data-list>
+            {% for p in media.photos %}{{ photoItem(p, issue.cover_id == p.id or (issue.coverRaw and issue.coverRaw.id == p.id)) }}{% endfor %}
+          </ul>
+          <template>{{ photoItem({id: '__ID__', thumb: '__THUMB__', alt: '', credit: '', consent: 'pending'}, false) }}</template>
+        </div>
+
+        <div class="a-grid" style="margin-top:20px">
+          {{ a.picker('Автограф выпуска (скан)', 'autograph_id', media.autograph, 'autograph', {hint: 'Лектор от руки пишет одну фразу на листе. Фото или скан листа.'}) }}
+        </div>
+      </section>
+
+      <section class="a-section" id="s-materials">
+        <h2>Материалы</h2>
+        <div class="a-grid">
+          {{ a.picker('Слайды (PDF)', 'slides_id', media.slides, 'file', {accept: 'application/pdf', hint: 'Файл загружается сразу, на сайте показывается только с галочкой ниже.'}) }}
+          <div class="a-field">{{ a.check('Лектор разрешил публиковать слайды', 'slides_ok', issue.slides_ok, 'Без галочки слайды на сайте не видны.') }}</div>
+        </div>
+        <h3>Что почитать и посмотреть <span class="a-opt">необязательно</span></h3>
+        <div data-repeater="reads">
+          <div data-list>{% for x in issue.reads %}{{ readItem(x, loop.index0) }}{% endfor %}</div>
+          <template>{{ readItem({}, '__i__') }}</template>
+          <button type="button" class="a-btn" data-add>Добавить</button>
+        </div>
+      </section>
+
+      <section class="a-section" id="s-check">
+        <h2>Проверка и итоги</h2>
+        <div class="a-grid">
+          {{ a.field('Число слушателей', 'listeners', issue.listeners, {type: 'number', min: 0, hint: 'Складывается в цифру «слушателей» на главной.'}) }}
+          {{ a.field('Конспект подготовил(а)', 'note_author', issue.note_author, {hint: 'Имя автора конспекта.'}) }}
+        </div>
+        {{ a.check('Конспект проверен лектором', 'checked', issue.checked, 'Поставьте, когда лектор прочитал и одобрил текст. Слайды и цитаты публикуются только с его разрешения.') }}
+        {{ a.check('Показывать среднюю оценку слушателей на сайте', 'show_rating', issue.show_rating, 'В админке оценка видна всегда.') }}
+      </section>
+
+      <section class="a-section" id="s-publish">
+        <h2>Публикация</h2>
+        <div class="a-radios">
+          <label class="a-check"><input type="radio" name="publish_state" value="draft" {% if issue.publish_state == 'draft' %}checked{% endif %}><span>Черновик<small>Не виден на сайте.</small></span></label>
+          <label class="a-check"><input type="radio" name="publish_state" value="published" {% if issue.publish_state == 'published' %}checked{% endif %}><span>Опубликовано<small>Виден на сайте сразу.</small></span></label>
+          <label class="a-check"><input type="radio" name="publish_state" value="scheduled" {% if issue.publish_state == 'scheduled' %}checked{% endif %}><span>По расписанию<small>Выйдет сам в указанное время.</small></span></label>
+        </div>
+        {{ a.field('Выйдет (московское время)', 'publish_at', dLocalInput(issue.publish_at) if issue.publish_at else '', {type: 'datetime-local', hint: 'Только для «По расписанию».'}) }}
+      </section>
+    </div>
+
+    <aside class="a-side">
+      {% if checklist | length %}
+      <div class="a-card">
+        <span class="label">Готовность</span>
+        <ul class="a-checklist">{% for c in checklist %}<li class="{{ 'ok' if c.ok else 'no' }}">{{ c.text }}</li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+      {% if not isNew %}
+      <div class="a-card">
+        <span class="label">Ссылки</span>
+        <ul class="a-list">
+          <li><a href="/admin/issues/{{ issue.id }}/preview" target="_blank">Предпросмотр</a></li>
+          <li><a href="/admin/issues/{{ issue.id }}/qr.png">QR на форму отзыва (PNG для слайда)</a></li>
+          <li class="muted mono" style="word-break:break-all">{{ siteUrl }}/otzyv/{{ issue.slug }}</li>
+        </ul>
+      </div>
+      {% endif %}
+      <nav class="a-toc" aria-label="Разделы формы">
+        <a href="#s-main">Основное</a><a href="#s-announce">Анонс</a><a href="#s-material">Материал</a><a href="#s-video">Видео</a><a href="#s-photos">Фото</a><a href="#s-materials">Материалы</a><a href="#s-check">Проверка</a><a href="#s-publish">Публикация</a>
+      </nav>
+    </aside>
+  </div>
+
+  <div class="a-savebar">
+    <button class="a-btn primary" type="submit">Сохранить</button>
+    <button class="a-btn" type="submit" name="_action" value="preview">Сохранить и посмотреть</button>
+    <a class="a-link" href="/admin/issues">К списку</a>
+  </div>
+</form>
+{% if not isNew %}
+<form method="post" action="/admin/issues/{{ issue.id }}/delete" data-confirm="Удалить выпуск без возможности восстановления?" class="a-danger">
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <button class="a-link danger" type="submit">Удалить выпуск</button>
+</form>
+{% endif %}
+{% endblock %}

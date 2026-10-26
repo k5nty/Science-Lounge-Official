@@ -1,0 +1,32 @@
+{% extends "layouts/admin.njk" %}
+{% block title %}Обращение{% endblock %}
+{% block content %}
+<div class="a-head"><h1>{{ TYPES[row.type] }}</h1><a class="a-link" href="/admin/feedback">← К списку</a></div>
+<div class="a-col">
+<dl class="a-dl">
+  <dt>Когда</dt><dd class="mono">{{ row.created_at.slice(0, 19).replace('T', ' ') }} UTC</dd>
+  {% if row.issue_number %}<dt>Выпуск</dt><dd><a href="/admin/issues/{{ row.issue_id }}">{{ issueNo(row.issue_number) }} · {{ row.issue_title }}</a></dd>{% endif %}
+  {% if row.rating %}<dt>Оценка</dt><dd class="mono">{{ row.rating }} / 5{% if row.grade %}, {{ row.grade }} класс{% endif %}</dd>{% endif %}
+  {% if row.good %}<dt>Что запомнилось</dt><dd>{{ row.good | nl2br }}</dd>{% endif %}
+  {% if row.better %}<dt>Что улучшить</dt><dd>{{ row.better | nl2br }}</dd>{% endif %}
+  {% if row.next_topic %}<dt>Хотят следующую</dt><dd>{{ row.next_topic }}</dd>{% endif %}
+  {% if row.question %}<dt>Вопрос</dt><dd>{{ row.question | nl2br }}</dd>{% endif %}
+  {% if row.what %}<dt>Предложение</dt><dd>{{ row.what }}</dd>{% endif %}
+  {% if row.why %}<dt>Почему</dt><dd>{{ row.why | nl2br }}</dd>{% endif %}
+  {% if row.kind %}<dt>Кто</dt><dd>{{ row.kind }}</dd>{% endif %}
+  {% if row.name %}<dt>Имя</dt><dd>{{ row.name }}</dd>{% endif %}
+  {% if row.contact %}<dt>Контакт</dt><dd>{{ row.contact }}</dd>{% endif %}
+  {% if row.page_url %}<dt>Где фото</dt><dd>{{ row.page_url }}</dd>{% endif %}
+  {% if row.message %}<dt>Сообщение</dt><dd>{{ row.message | nl2br }}</dd>{% endif %}
+  {% if row.due_at %}<dt>Срок</dt><dd class="mono">{{ row.due_at.slice(0, 10) }}</dd>{% endif %}
+  {% if row.consent %}<dt>Согласие на обработку</dt><dd class="mono">{{ row.consent_at.slice(0, 19).replace('T', ' ') }} UTC, IP {{ row.consent_ip }}</dd>{% endif %}
+</dl>
+<form method="post" class="a-form">
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <div class="a-field"><label for="status">Статус</label><select id="status" name="status">{% for k, v in STATUSES %}<option value="{{ k }}" {% if row.status == k %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></div>
+  <div class="a-field"><label for="note">Заметка для себя</label><textarea id="note" name="note" rows="3">{{ row.note }}</textarea></div>
+  <div><button class="a-btn primary" type="submit">Сохранить</button></div>
+</form>
+</div>
+<form method="post" action="/admin/feedback/{{ row.id }}/delete" data-confirm="Удалить обращение?" class="a-danger"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-link danger" type="submit">Удалить</button></form>
+{% endblock %}

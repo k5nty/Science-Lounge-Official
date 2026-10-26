@@ -1,0 +1,31 @@
+{# Default footer. A theme can ship src/views/themes/<id>/footer.njk instead. #}
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <div class="big">{{ settings.site_title }}</div>
+      <p class="label made">{{ t('footer.made_by') }}</p>
+    </div>
+    <div>
+      <span class="label">{{ t('footer.sections') }}</span>
+      <ul>{% for n in navItems() %}{% if not n.cta %}<li><a href="{{ n.href }}">{{ n.label }}</a></li>{% endif %}{% endfor %}</ul>
+    </div>
+    <div>
+      <span class="label">{{ t('footer.contact') }}</span>
+      <ul>
+        {% if channelUrl %}<li><a href="{{ channelUrl }}" target="_blank" rel="noopener" data-goal="channel">Telegram</a></li>{% endif %}
+        {% if settings.contact_email %}<li><a href="mailto:{{ settings.contact_email }}">{{ settings.contact_email }}</a></li>{% endif %}
+        <li><a href="{{ url('feedback') }}">{{ t('nav.feedback') }}</a></li>
+        <li><a href="{{ url('feedback') }}?t=contact">{{ t('fb.contact') }}</a></li>
+      </ul>
+    </div>
+    <div>
+      <span class="label">{{ t('footer.legal') }}</span>
+      <ul>
+        <li><a href="/politika">{{ t('footer.policy') }}</a></li>
+        <li><a href="/udalit-foto">{{ t('photo.h') }}</a></li>
+        <li><a href="/feed.xml">{{ t('footer.rss') }}</a></li>
+        <li><a href="/raspisanie.ics">{{ t('footer.cal') }}</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>

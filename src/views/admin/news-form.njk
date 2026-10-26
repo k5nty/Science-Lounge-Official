@@ -1,0 +1,29 @@
+{% extends "layouts/admin.njk" %}
+{% import "admin/_macros.njk" as a %}
+{% block title %}{{ item.title_ru or 'Новая новость' }}{% endblock %}
+{% block content %}
+<form method="post" action="{{ '/admin/news' if isNew else '/admin/news/' + item.id }}" class="a-form" data-guard novalidate>
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <div class="a-head"><h1>{{ 'Новая новость' if isNew else item.title_ru }}</h1></div>
+  {% if errors | length %}<div class="a-flash err"><ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+  <div class="a-col"><section class="a-section">
+    <p class="a-hint">Пишите своими словами, коротко: 2–3 предложения и ссылка на первоисточник. Чужой текст целиком не копируйте.</p>
+    {{ a.field('Заголовок', 'title_ru', item.title_ru, {required: true, max: 120, wide: true}) }}
+    {{ a.field('Заголовок по-английски', 'title_en', item.title_en, {wide: true}) }}
+    {{ a.field('Коротко о главном', 'summary_ru', item.summary_ru, {rows: 5, max: 400, wide: true, hint: 'До 400 знаков.'}) }}
+    {{ a.field('То же по-английски', 'summary_en', item.summary_en, {rows: 4, wide: true}) }}
+    <div class="a-grid">
+      {{ a.field('Источник (название)', 'source_name', item.source_name, {ph: 'Например: NobelPrize.org'}) }}
+      {{ a.field('Ссылка на источник', 'source_url', item.source_url, {ph: 'https://'}) }}
+    </div>
+    <div class="a-grid">
+      {{ a.field('Дата новости', 'date', dateValue, {type: 'date', required: true}) }}
+      <div class="a-field">{{ a.check('Показывать на сайте', 'published', item.published) }}</div>
+    </div>
+    {{ a.picker('Картинка (необязательно)', 'image_id', image, 'poster', {hint: 'Только свои или свободные изображения. Горизонтальная, от 1200 px.'}) }}
+    {{ a.field('Адрес страницы (необязательно)', 'slug', item.slug) }}
+  </section></div>
+  <div class="a-savebar"><button class="a-btn primary" type="submit">Сохранить</button><a class="a-link" href="/admin/news">К списку</a></div>
+</form>
+{% if not isNew %}<form method="post" action="/admin/news/{{ item.id }}/delete" data-confirm="{{ 'Скрыть новость?' if item.auto else 'Удалить новость?' }}" class="a-danger"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-link danger" type="submit">{{ 'Скрыть' if item.auto else 'Удалить' }}</button></form>{% endif %}
+{% endblock %}

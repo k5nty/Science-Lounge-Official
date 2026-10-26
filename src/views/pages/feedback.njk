@@ -1,0 +1,50 @@
+{% extends "layouts/base.njk" %}
+{% import "partials/macros.njk" as m with context %}
+{% import "partials/forms.njk" as f with context %}
+
+{% block content %}
+<div class="sec-head"><h1 class="page-title">{{ t('fb.h') }}</h1></div>
+<div class="chips" role="group" aria-label="{{ t('fb.h') }}" style="margin-bottom:28px">
+  {% for k in ['review', 'question', 'suggest', 'contact'] %}
+    <a class="chip" href="{{ url('feedback') }}?t={{ k }}" {% if type == k %}aria-current="true"{% endif %}>{{ t('fb.' + k) }}</a>
+  {% endfor %}
+</div>
+
+{% if type == 'review' %}
+  {% if pastList | length %}
+    <form method="get" action="{{ url('feedback') }}" class="field" style="max-width:640px;margin-bottom:20px">
+      <input type="hidden" name="t" value="review">
+      <label for="pick">{{ t('fb.which') }}</label>
+      <select id="pick" name="v" data-autosubmit>
+        {% for i in pastList %}<option value="{{ i.id }}" {% if (pick and pick == i.id) or (not pick and loop.first) %}selected{% endif %}>{{ issueNo(i.number) }} · {{ L(i, 'title') }}</option>{% endfor %}
+      </select>
+      <noscript><button class="btn" type="submit">OK</button></noscript>
+    </form>
+    {% set chosen = pastList[0] %}
+    {% for i in pastList %}{% if pick == i.id %}{% set chosen = i %}{% endif %}{% endfor %}
+    {{ f.review(chosen) }}
+  {% else %}
+    <p class="empty">{{ t('archive.none') }}</p>
+  {% endif %}
+{% elif type == 'question' %}
+  {% if upList | length %}
+    {% set chosen = upList[0] %}
+    {% for i in upList %}{% if pick == i.id %}{% set chosen = i %}{% endif %}{% endfor %}
+    <form method="get" action="{{ url('feedback') }}" class="field" style="max-width:640px;margin-bottom:20px">
+      <input type="hidden" name="t" value="question">
+      <label for="pick">{{ t('fb.which') }}</label>
+      <select id="pick" name="v" data-autosubmit>
+        {% for i in upList %}<option value="{{ i.id }}" {% if i.id == chosen.id %}selected{% endif %}>{{ issueNo(i.number) }} · {{ L(i, 'title') }} ({{ fx.dl(i.start_at) }})</option>{% endfor %}
+      </select>
+      <noscript><button class="btn" type="submit">OK</button></noscript>
+    </form>
+    {{ f.question(chosen) }}
+  {% else %}
+    <p class="empty">{{ t('sched.empty') }}</p>
+  {% endif %}
+{% elif type == 'suggest' %}
+  {{ f.suggest() }}
+{% else %}
+  {{ f.contact() }}
+{% endif %}
+{% endblock %}

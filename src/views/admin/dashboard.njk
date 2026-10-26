@@ -1,0 +1,48 @@
+{% extends "layouts/admin.njk" %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<h1>Главная</h1>
+<div class="a-cards">
+  <div class="a-card">
+    <span class="label">Ближайшая лекция</span>
+    {% if next %}
+      <p class="a-big mono">{{ issueNo(next.number) }}</p>
+      <p><a href="/admin/issues/{{ next.id }}">{{ next.title_ru }}</a></p>
+      <p class="muted">{{ dLong(next.start_at) }}, {{ dTime(next.start_at) }}</p>
+    {% else %}
+      <p class="muted">Нет предстоящих. <a href="/admin/issues/new">Добавить анонс</a></p>
+    {% endif %}
+  </div>
+  <div class="a-card">
+    <span class="label">Выпуски</span>
+    <p class="a-big mono">{{ published }} <small>из {{ totalIssues }}</small></p>
+    <p class="muted">на сайте / всего</p>
+    <p><a href="/admin/issues/new" class="a-btn primary">Новый выпуск</a></p>
+  </div>
+  {% if user.role == 'admin' %}
+  <div class="a-card">
+    <span class="label">Обращения</span>
+    <p class="a-big mono">{{ counts.new }}</p>
+    <p class="muted">новых{% if counts.photoNew %} · фото на удаление: <b>{{ counts.photoNew }}</b>{% endif %}</p>
+    <p><a href="/admin/feedback?status=new">Открыть</a></p>
+  </div>
+  {% endif %}
+</div>
+
+{% if drafts | length %}
+<h2>Черновики</h2>
+<ul class="a-list">{% for i in drafts %}<li><a href="/admin/issues/{{ i.id }}">{{ issueNo(i.number) }} · {{ i.title_ru }}</a> <span class="muted">{{ dLong(i.start_at) }}</span></li>{% endfor %}</ul>
+{% endif %}
+{% if scheduled | length %}
+<h2>Ждут публикации</h2>
+<ul class="a-list">{% for i in scheduled %}<li><a href="/admin/issues/{{ i.id }}">{{ issueNo(i.number) }} · {{ i.title_ru }}</a> <span class="muted">выйдет {{ dLong(i.publish_at) }}, {{ dTime(i.publish_at) }}</span></li>{% endfor %}</ul>
+{% endif %}
+
+<h2>С чего начать</h2>
+<ol class="a-steps">
+  <li>Добавьте лектора: <a href="/admin/lecturers/new">новый лектор</a>.</li>
+  <li>Создайте <a href="/admin/issues/new">выпуск</a>: тема, дата, лектор, описание. Сохраните как черновик и посмотрите предпросмотр.</li>
+  <li>Нажмите «Опубликовать». Анонс появится на сайте сразу.</li>
+  <li>После лекции откройте выпуск и добавьте конспект, фото и видео. Подробно: <a href="/admin/help">как вести сайт</a>.</li>
+</ol>
+{% endblock %}

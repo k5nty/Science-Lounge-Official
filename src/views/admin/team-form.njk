@@ -1,0 +1,42 @@
+{% extends "layouts/admin.njk" %}
+{% import "admin/_macros.njk" as a %}
+{% block title %}{{ member.name_ru or 'Новый человек' }}{% endblock %}
+{% macro linkItem(x, i) %}
+<div class="a-rep-item row" data-item>
+  <div class="a-field"><label>Название</label><input type="text" name="links[{{ i }}][label]" value="{{ x.label }}" maxlength="80" placeholder="LinkedIn, Telegram"></div>
+  <div class="a-field"><label>Ссылка</label><input type="text" name="links[{{ i }}][url]" value="{{ x.url }}" maxlength="500"></div>
+  <span class="a-rep-tools"><button type="button" data-remove>×</button></span>
+</div>
+{% endmacro %}
+{% block content %}
+<form method="post" action="{{ '/admin/team' if isNew else '/admin/team/' + member.id }}" class="a-form" data-guard novalidate>
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <div class="a-head"><h1>{{ 'Новый человек' if isNew else member.name_ru }}</h1></div>
+  {% if errors | length %}<div class="a-flash err"><ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+  <div class="a-col"><section class="a-section">
+    <div class="a-grid">
+      <div class="a-field"><label for="kind">Кто</label><select id="kind" name="kind"><option value="founder" {% if member.kind == 'founder' %}selected{% endif %}>сооснователь</option><option value="helper" {% if member.kind == 'helper' %}selected{% endif %}>помощник команды</option></select></div>
+      {{ a.field('Порядок на странице', 'position', member.position, {type: 'number'}) }}
+    </div>
+    <div class="a-grid">
+      {{ a.field('Имя', 'name_ru', member.name_ru, {required: true}) }}
+      {{ a.field('Имя по-английски', 'name_en', member.name_en) }}
+    </div>
+    <div class="a-grid">
+      {{ a.field('Роль', 'role_ru', member.role_ru, {hint: 'Несколько ролей через запятую: каждая станет плашкой. Например «Сооснователь, CFO».'}) }}
+      {{ a.field('Роль по-английски', 'role_en', member.role_en, {hint: 'Тоже через запятую, в том же порядке.'}) }}
+    </div>
+    {{ a.picker('Фото', 'photo_id', photo, 'team', {hint: 'Лучше, чтобы все портреты команды были сняты в одном стиле.'}) }}
+    {{ a.field('О себе', 'bio_ru', member.bio_ru, {rows: 3, max: 300, wide: true, hint: '2–3 строки.'}) }}
+    {{ a.field('О себе по-английски', 'bio_en', member.bio_en, {rows: 3, wide: true}) }}
+    <h3>Ссылки</h3>
+    <div data-repeater="links"><div data-list>{% for x in member.links %}{{ linkItem(x, loop.index0) }}{% endfor %}</div><template>{{ linkItem({}, '__i__') }}</template><button type="button" class="a-btn" data-add>Добавить ссылку</button></div>
+    <div class="a-checks" style="margin-top:20px">
+      {{ a.check('Выпускник', 'alumni', member.alumni) }}
+      {{ a.check('Показывать на сайте', 'active', member.active) }}
+    </div>
+  </section></div>
+  <div class="a-savebar"><button class="a-btn primary" type="submit">Сохранить</button><a class="a-link" href="/admin/team">К списку</a></div>
+</form>
+{% if not isNew %}<form method="post" action="/admin/team/{{ member.id }}/delete" data-confirm="Удалить?" class="a-danger"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-link danger" type="submit">Удалить</button></form>{% endif %}
+{% endblock %}

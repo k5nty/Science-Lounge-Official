@@ -1,0 +1,38 @@
+{% extends "layouts/admin.njk" %}
+{% import "admin/_macros.njk" as a %}
+{% block title %}Настройки{% endblock %}
+{% block content %}
+<div class="a-head"><h1>Настройки сайта</h1></div>
+<form method="post" action="/admin/settings" class="a-form" data-guard>
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <div class="a-col">
+  {% for g in schema %}
+    <section class="a-section">
+      <h2>{{ g.group }}</h2>
+      {% if g.hint %}<p class="a-hint">{{ g.hint }}</p>{% endif %}
+      {% for item in g.items %}
+        {% if item.type == 'select' %}
+          <div class="a-field"><label for="f-{{ item.key }}">{{ item.label }}</label>
+            <select id="f-{{ item.key }}" name="{{ item.key }}">{% for o in item.options %}<option value="{{ o[0] }}" {% if values[item.key] == o[0] %}selected{% endif %}>{{ o[1] }}</option>{% endfor %}</select>
+            {% if item.hint %}<span class="a-hint">{{ item.hint }}</span>{% endif %}</div>
+        {% else %}
+          {{ a.field(item.label, item.key, values[item.key], {rows: item.rows if item.type == 'textarea' else 0, hint: item.hint, wide: item.type == 'textarea'}) }}
+        {% endif %}
+      {% endfor %}
+    </section>
+  {% endfor %}
+  </div>
+  <div class="a-savebar"><button class="a-btn primary" type="submit">Сохранить</button></div>
+</form>
+
+<section class="a-section" style="margin-top:32px">
+  <h2>Подключения (задаются в файле .env на сервере)</h2>
+  <ul class="a-list">
+    <li>Адрес сайта: <span class="mono">{{ env.siteUrl }}</span></li>
+    <li>Telegram-бот для обращений: {{ 'подключён' if env.telegram else 'не подключён' }}
+      {% if env.telegram %}<form method="post" action="/admin/settings/test-telegram" style="display:inline"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-link" type="submit">Отправить проверочное сообщение</button></form>{% endif %}</li>
+    <li>Яндекс Метрика: {{ 'подключена (счётчик грузится только после согласия)' if env.metrika else 'не подключена' }}</li>
+    <li>Umami: {{ 'подключён' if env.umami else 'не подключён' }}</li>
+  </ul>
+</section>
+{% endblock %}

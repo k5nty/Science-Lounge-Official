@@ -1,0 +1,10 @@
+{% extends "layouts/base.njk" %}
+{% import "partials/forms.njk" as f with context %}
+
+{% block content %}
+<div style="max-width:640px">
+  <h1 class="page-title">{{ t('photo.h') }}</h1>
+  <p class="lead-text" style="margin:14px 0 26px">{{ t('photo.lead', {days: settings.photo_removal_days or 10}) }}</p>
+  {{ f.photoRemoval(where) }}
+</div>
+{% endblock %}

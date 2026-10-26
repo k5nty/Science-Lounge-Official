@@ -1,0 +1,23 @@
+{# Event card macros for the "events" theme. Import with context. #}
+
+{% macro card(i) %}
+  {%- set st = 'cancelled' if i.status_flag == 'cancelled' else ('past' if i.past else ('moved' if i.status_flag == 'moved' else ('sold_out' if i.status_flag == 'sold_out' else ('reg_open' if (i.reg_enabled and i.reg_url) else 'soon')))) -%}
+  {%- set href = url('issue', {slug: i.slug}) -%}
+  <article class="ev{{ ' is-past' if i.past }}">
+    <a class="ev-img{{ ' ph' if not i.cover }}" href="{{ href }}" tabindex="-1" aria-hidden="true">
+      {%- if i.cover -%}{{ picture(i.cover, {sizes: '(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 430px', src: 480, alt: ''}) }}{%- else -%}<span class="ev-no">{{ pad2(i.number) }}</span>{%- endif -%}
+    </a>
+    <span class="flag ev-flag {{ st }}">{{ t('status.' + st) }}</span>
+    <div class="ev-body">
+      <span class="ev-cat">{% if i.tags | length %}{{ tagName(i.tags[0]) }}{% else %}{{ issueNo(i.number) }}{% endif %}</span>
+      <h3 class="ev-t"><a href="{{ href }}">{{ L(i, 'title') }}</a></h3>
+      <p class="ev-date">{{ fx.dwd(i.start_at) }}, {{ fx.dl(i.start_at) }}{% if not i.past %} · {{ dTime(i.start_at) }}{% endif %}</p>
+      <p class="ev-by">{{ i.lecturers | map_names(lang) }}</p>
+      {% if i.past %}<a class="btn primary" href="{{ href }}">{{ 'Читать' if lang == 'ru' else 'Read' }}</a>
+      {% elif st == 'reg_open' %}<a class="btn primary" href="{{ i.reg_url }}" target="_blank" rel="noopener" data-goal="register">{{ t('btn.register') }}</a>
+      {% else %}<a class="btn" href="{{ href }}">{{ t('btn.details') }}</a>{% endif %}
+    </div>
+  </article>
+{% endmacro %}
+
+{% macro search_icon() %}<svg class="ic" viewBox="0 0 28 28" aria-hidden="true"><circle cx="12" cy="12" r="8.2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M18.2 18.2 25 25" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>{% endmacro %}

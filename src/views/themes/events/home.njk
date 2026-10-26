@@ -1,0 +1,88 @@
+{# Theme "events": yellow band with the lead issue, filter strip, grid of event cards. #}
+{% import "partials/macros.njk" as m with context %}
+{% import "partials/forms.njk" as f with context %}
+{% import "themes/events/cards.njk" as ev with context %}
+
+{% set cards = [] %}
+{% for i in upcomingList %}{% if not lead or i.id != lead.id %}{% set _p = cards.push(i) %}{% endif %}{% endfor %}
+{% for i in latest %}{% if not lead or i.id != lead.id %}{% set _p = cards.push(i) %}{% endif %}{% endfor %}
+{% set tagKeys = [] %}{% set tagLabels = [] %}
+{% for i in cards %}{% for tg in i.tags %}{% if tagKey(tg) not in tagKeys %}{% set _k = tagKeys.push(tagKey(tg)) %}{% set _l = tagLabels.push(tagName(tg)) %}{% endif %}{% endfor %}{% endfor %}
+
+{% if lead %}
+{% set lecturer = lead.lecturer %}
+<section class="pg-band hero" aria-labelledby="hero-t">
+  <div class="in">
+    <p class="crumbs"><a href="{{ url('home') }}">{{ settings.site_title }}</a><span aria-hidden="true">/</span><b>{{ t('status.next') if isNext else t('status.last') }}</b></p>
+    <div class="hero-grid">
+      <div class="hero-text">
+        <p class="flag">{{ issueNo(lead.number) }}{% if leadStatus == 'cancelled' or leadStatus == 'moved' or leadStatus == 'sold_out' %} · {{ t('status.' + leadStatus) }}{% endif %}</p>
+        <h1 id="hero-t"><a href="{{ url('issue', {slug: lead.slug}) }}">{{ L(lead, 'title') }}</a></h1>
+        <p class="hero-when"><b>{{ fx.dl(lead.start_at) }}</b><span>{{ fx.dwd(lead.start_at) }}, {{ dTime(lead.start_at) }}</span></p>
+        <p class="hero-where">{% if lecturer %}<span>{{ lead.lecturers | map_names(lang) }}</span>{% endif %}{% if L(lead, 'place') %}<span>{{ L(lead, 'place') }}</span>{% endif %}</p>
+        <div class="actions">
+          {% if isNext %}
+            {% if lead.reg_enabled and lead.reg_url and leadStatus != 'sold_out' and leadStatus != 'cancelled' %}
+              <a class="btn primary" href="{{ lead.reg_url }}" target="_blank" rel="noopener" data-goal="register">{{ t('btn.register') }}</a>
+              <a class="btn" href="/vypusk/{{ lead.slug }}.ics" data-goal="calendar">{{ t('btn.calendar') }}</a>
+            {% else %}
+              <a class="btn primary" href="/vypusk/{{ lead.slug }}.ics" data-goal="calendar">{{ t('btn.calendar') }}</a>
+              <a class="btn" href="{{ url('issue', {slug: lead.slug}) }}">{{ t('btn.details') }}</a>
+            {% endif %}
+          {% else %}
+            <a class="btn primary" href="{{ url('issue', {slug: lead.slug}) }}">{{ t('btn.read') }}</a>
+            <a class="btn" href="{{ url('schedule') }}">{{ t('nav.schedule') }}</a>
+          {% endif %}
+        </div>
+      </div>
+      {% if lead.cover or lecturer %}
+      <a class="hero-photo" href="{{ url('issue', {slug: lead.slug}) }}" tabindex="-1" aria-hidden="true">
+        {% if lead.cover %}{{ picture(lead.cover, {sizes: '(max-width: 1100px) 100vw, 560px', src: 960, eager: true, alt: ''}) }}
+        {% else %}{{ m.portrait(lecturer, {color: true, eager: true, sizes: '(max-width: 1100px) 100vw, 560px', src: 960}) }}{% endif %}
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% else %}
+<section class="pg-band hero" aria-labelledby="hero-t">
+  <div class="in">
+    <p class="crumbs"><a href="{{ url('home') }}">{{ settings.site_title }}</a></p>
+    <div class="hero-grid one">
+      <div class="hero-text">
+        <h1 id="hero-t">{{ t('home.empty_h') }}</h1>
+        <p class="hero-where">{{ t('home.empty_p') }}</p>
+        {% if channelUrl %}<div class="actions"><a class="btn primary" href="{{ channelUrl }}" target="_blank" rel="noopener">{{ t('nav.channel') }}</a></div>{% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if tagKeys | length %}
+<div class="filters" role="group" aria-label="{{ 'Темы' if lang == 'ru' else 'Topics' }}">
+  <div class="chips">
+    {% for k in tagKeys %}<a class="chip" href="{{ url('archive') }}?tag={{ k | urlencode }}">{{ tagLabels[loop.index0] }}</a>{% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if cards | length %}
+<h2 class="visually-hidden">{{ t('home.latest') }}</h2>
+<div class="ev-grid">
+  {% for i in cards %}{{ ev.card(i) }}{% endfor %}
+  <a class="ev-more" href="{{ url('archive') }}"><span>{{ t('btn.all_issues') }}</span></a>
+</div>
+{% endif %}
+
+{% if newsList | length %}
+<section class="ev-news" aria-labelledby="nw-t">
+  <div class="ev-news-head"><h2 id="nw-t">{{ t('news.h') }}</h2><a class="ev-news-all" href="{{ url('news') }}">{{ t('news.all') }}</a></div>
+  <div class="news-list">{% for n in newsList %}{{ m.newsItem(n) }}{% endfor %}</div>
+</section>
+{% endif %}
+
+<section class="ev-suggest" aria-labelledby="sg-t">
+  <h2 id="sg-t">{{ t('home.suggest_h') }}</h2>
+  {{ f.suggestInline() }}
+</section>
