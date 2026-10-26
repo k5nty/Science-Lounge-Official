@@ -1,9 +1,0 @@
-{# Floating design picker for comparing the five themes. Plain links: works without JavaScript. #}
-<nav class="theme-switch" aria-label="{{ t('theme.h') }}">
-  <span class="theme-switch-h">{{ t('theme.h') }}</span>
-  <ul>
-    {% for th in themes %}
-      <li><a href="{{ themeHref(th.id) }}" {% if th.id == theme %}aria-current="true"{% endif %} title="{{ th.note }}" data-theme-id="{{ th.id }}">{{ th.name if lang == 'ru' else th.en }}</a></li>
-    {% endfor %}
-  </ul>
-</nav>
