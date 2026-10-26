@@ -48,6 +48,7 @@ npm start                         # http://localhost:3000   админка: /adm
 | `npm run seed:demo` / `seed:clear` | добавить / убрать демо-данные |
 | `npm run backup` | копия базы и фото сейчас |
 | `npm run content:materials` | загрузить материалы по темам лекций из `materialy-lektsiy/` в выпуски |
+| `npm run content:portraits` | поставить портреты лекторов из `assets/portraits/` |
 
 ## Лицензии зависимостей
 

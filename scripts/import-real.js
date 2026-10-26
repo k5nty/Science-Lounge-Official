@@ -14,6 +14,7 @@ import { slugify, issueSlug } from '../src/lib/slug.js';
 import { mskToUtcIso } from '../src/lib/dates.js';
 import { typo } from '../src/lib/typo.js';
 import { importMaterials } from './import-materials.js';
+import { importPortraits } from './import-portraits.js';
 
 const SRC = process.argv[2] || path.join(os.homedir(), 'Downloads', 'ChatExport_вова назаров');
 const PH = path.join(SRC, 'photos');
@@ -40,6 +41,7 @@ async function addImage(file, { alt, credit = '', crop = null, consent = 'genera
 }
 
 /* ---------- lecturers ---------- */
+// Portraits of Ratushny, Surdin, Zubov, Volodyaev and Gorshunov come from assets/portraits/ (see import-portraits.js).
 const LECTURERS = {
   ratushny: {
     name: 'Андрей Ратушный', en: 'Andrey Ratushny', area: 'Биология', area_en: 'Biology',
@@ -47,7 +49,6 @@ const LECTURERS = {
     org: 'Институт медико-биологических проблем РАН', org_en: 'Institute of Biomedical Problems, Russian Academy of Sciences',
     bio: 'Кандидат биологических наук, старший научный сотрудник Института медико-биологических проблем РАН, доцент Факультета космических исследований МГУ.',
     bio_en: 'PhD in biology, senior researcher at the Institute of Biomedical Problems of the Russian Academy of Sciences, associate professor at the Faculty of Space Research, Lomonosov Moscow State University.',
-    portrait: { file: 'photo_1541955_0.jpg', alt: 'Портрет: Андрей Ратушный' },
   },
   surdin: {
     name: 'Владимир Сурдин', en: 'Vladimir Surdin', area: 'Астрономия', area_en: 'Astronomy',
@@ -62,7 +63,6 @@ const LECTURERS = {
     org: 'Русагро', org_en: 'Rusagro',
     bio: 'Выпускник школы «Летово», менеджер цифровых проектов в компании «Русагро», основатель Agrotech-стартапа, студент МФТИ и бизнес-школы «Сколково».',
     bio_en: 'Letovo School alumnus, digital projects manager at Rusagro, founder of an agrotech startup, student at MIPT and the Skolkovo business school.',
-    portrait: { file: 'photo_1541958_0.jpg', alt: 'Портрет: Андрей Зубов', crop: [0.31, 0.245, 0.745, 0.69] },
   },
   volodyaev: {
     name: 'Илья Володяев', en: 'Ilya Volodyaev', area: 'Биология', area_en: 'Biology',
@@ -77,7 +77,6 @@ const LECTURERS = {
     org: 'инвестиционная компания АБ Капитал', org_en: 'AB Capital investment company',
     bio: 'Операционный директор инвестиционной компании АБ Капитал. Двадцать лет работал финансовым директором в компаниях разных отраслей. Сегодня перестраивает бизнес-процессы с помощью ИИ.',
     bio_en: 'Chief operating officer of the investment company AB Capital. Spent twenty years as a finance director in companies of different industries. Today he rebuilds business processes with the help of AI.',
-    portrait: { file: 'photo_1541960_0.jpg', alt: 'Портрет: Игорь Горшунов', crop: [0.486, 0.195, 1.0, 0.649] },
   },
   namsaraev: {
     name: 'Зоригто Намсараев', en: 'Zorigto Namsaraev', area: 'Науки о Земле', area_en: 'Earth science',
@@ -159,6 +158,7 @@ for (const [key, l] of Object.entries(LECTURERS)) {
     null,
   );
 }
+await importPortraits();
 
 for (const i of ISSUES) {
   const photoIds = [];

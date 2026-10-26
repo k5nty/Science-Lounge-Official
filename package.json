@@ -19,7 +19,8 @@
     "docs:screenshots": "node scripts/make-screenshots.js docs/screenshots",
     "content:clear": "node scripts/clear-content.js",
     "content:import": "node scripts/import-real.js",
-    "content:materials": "node scripts/import-materials.js"
+    "content:materials": "node scripts/import-materials.js",
+    "content:portraits": "node scripts/import-portraits.js"
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
