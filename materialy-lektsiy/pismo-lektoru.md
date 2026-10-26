@@ -36,11 +36,11 @@ Science Lounge, школа «Летово»
 
 | Лектор | Лекция | Дата | Страница |
 |---|---|---|---|
-| Андрей Ратушный | Межпланетные перелёты и их медико-биологические особенности | 30 января 2026 | https://k5nty.github.io/science-lounge/vypusk/01-mezhplanetnye-perelety-i-ikh-mediko/ |
-| Владимир Сурдин | Путешествия к Луне | 18 февраля 2026 | https://k5nty.github.io/science-lounge/vypusk/02-puteshestviya-k-lune/ |
-| Андрей Зубов | Навигация робота в агрессивной среде | 13 марта 2026 | https://k5nty.github.io/science-lounge/vypusk/03-navigatsiya-robota-v-agressivnoy-srede/ |
-| Илья Володяев | Как зарождается жизнь? Нарушает ли эмбрион законы физики? | 24 апреля 2026 | https://k5nty.github.io/science-lounge/vypusk/04-kak-zarozhdaetsya-zhizn-narushaet-li-embrion/ |
-| Игорь Горшунов | ИИ всегда, ИИ везде | 18 сентября 2026 | https://k5nty.github.io/science-lounge/vypusk/05-ii-vsegda-ii-vezde/ |
-| Зоригто Намсараев | Антарктида: льды, жизнь и исследования | 2 октября 2026 | https://k5nty.github.io/science-lounge/vypusk/06-antarktida-ldy-zhizn-i-issledovaniya/ |
+| Андрей Ратушный | Межпланетные перелёты и их медико-биологические особенности | 30 января 2026 | https://k5nty.github.io/science-lounge-official/vypusk/01-mezhplanetnye-perelety-i-ikh-mediko/ |
+| Владимир Сурдин | Путешествия к Луне | 18 февраля 2026 | https://k5nty.github.io/science-lounge-official/vypusk/02-puteshestviya-k-lune/ |
+| Андрей Зубов | Навигация робота в агрессивной среде | 13 марта 2026 | https://k5nty.github.io/science-lounge-official/vypusk/03-navigatsiya-robota-v-agressivnoy-srede/ |
+| Илья Володяев | Как зарождается жизнь? Нарушает ли эмбрион законы физики? | 24 апреля 2026 | https://k5nty.github.io/science-lounge-official/vypusk/04-kak-zarozhdaetsya-zhizn-narushaet-li-embrion/ |
+| Игорь Горшунов | ИИ всегда, ИИ везде | 18 сентября 2026 | https://k5nty.github.io/science-lounge-official/vypusk/05-ii-vsegda-ii-vezde/ |
+| Зоригто Намсараев | Антарктида: льды, жизнь и исследования | 2 октября 2026 | https://k5nty.github.io/science-lounge-official/vypusk/06-antarktida-ldy-zhizn-i-issledovaniya/ |
 
-Ссылки на тексты на GitHub: https://github.com/k5nty/science-lounge/tree/main/materialy-lektsiy
+Ссылки на тексты на GitHub: https://github.com/k5nty/science-lounge-official/tree/main/materialy-lektsiy
