@@ -17,10 +17,11 @@
     <div class="speaker-box">{{ m.portrait(l) }}<span><span class="label">{{ t('issue.lecturer') }}</span><b>{{ L(l, 'name') }}</b><p>{{ L(l, 'role') }}{% if L(l, 'org') %}, {{ L(l, 'org') }}{% endif %}</p>{% if L(l, 'bio') %}<p class="bio">{{ L(l, 'bio') }}</p>{% endif %}</span></div>
   {% endfor %}
 </div>
+{% if not issue.past %}
 <div class="actions">
   {% if not issue.past %}<a class="btn primary" href="/vypusk/{{ issue.slug }}.ics" data-goal="calendar">{{ t('btn.calendar') }}</a>{% endif %}
   {% if issue.reg_enabled and issue.reg_url and not issue.past %}<a class="btn" href="{{ issue.reg_url }}" target="_blank" rel="noopener">{{ t('btn.register') }}</a>{% endif %}
-  {% if issue.past %}<a class="btn" href="/vypusk/{{ issue.slug }}" hreflang="ru">{{ t('issue.writeup_link') }}</a>{% endif %}
 </div>
-{% if issue.past %}<p class="muted" style="margin-top:12px;font-size:14px">{{ t('issue.writeup') }}.</p>{% endif %}
+{% endif %}
+{% include "partials/material.njk" %}
 {% endblock %}

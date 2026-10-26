@@ -4,6 +4,7 @@ import { typo, typoRich } from '../src/lib/typo.js';
 import { slugify, issueSlug, translit } from '../src/lib/slug.js';
 import { mskToUtcIso, toLocalInput, fromLocalInput, longDate, dateRangeRu } from '../src/lib/dates.js';
 import { renderRich, makeTermContext, esc, plainText } from '../src/lib/markup.js';
+import { renderMaterial, materialBody } from '../src/lib/material.js';
 import { icsEscape, fold, vcalendar, vevent } from '../src/lib/ics.js';
 import { toCsv } from '../src/lib/csv.js';
 import { videoEmbed } from '../src/lib/video.js';
@@ -156,4 +157,28 @@ test('news feeds: RSS with CDATA and escaped HTML, Atom, junk summaries, long su
 
   const src = parseSources('ru|Элементы|https://elementy.ru/rss/news\n# en|Off|https://off.example/rss\nen|Plain http|http://example.org/rss\nde|Wrong lang|https://example.org/rss\nen|Local|https://localhost/rss\nen|IP|https://10.0.0.5/rss\nru||https://example.org/x\nen|Ok|https://phys.org/rss-feed/');
   assert.deepEqual(src.map((s) => s.name), ['Элементы', 'Ok']);
+});
+
+test('material: headings, lists, slide cues, code and inline marks', () => {
+  const html = renderMaterial(['## [00:00] Вступление', '', '[Слайд: схема орбит]', '', '**Лектор:** Добрый *день*!', 'Вторая строка.', '', '- раз', '- два', '1. первый', '', '### Кости', '', '```', 'f(x="<a>")', '```', '', '---'].join('\n'));
+  assert.ok(html.includes('<h3>[00:00] Вступление</h3>'));
+  assert.ok(html.includes('<p class="slide">Слайд: схема орбит</p>'));
+  assert.ok(html.includes('<p><b>Лектор:</b> Добрый <i>день</i>! Вторая строка.</p>'), 'lines of one paragraph are joined');
+  assert.ok(html.includes('<ul><li>раз</li><li>два</li></ul>\n<ol><li>первый</li></ol>'), 'a switch of list type starts a new list');
+  assert.ok(html.includes('<h4>Кости</h4>'));
+  assert.ok(html.includes('<pre><code>f(x=&quot;&lt;a&gt;&quot;)</code></pre>'));
+  assert.ok(html.endsWith('<hr>'));
+  assert.equal(renderMaterial(''), '');
+});
+
+test('material: raw HTML is escaped', () => {
+  const html = renderMaterial('<script>alert(1)</script> и <b>не жирный</b>');
+  assert.ok(!html.includes('<script>') && !html.includes('<b>не'));
+  assert.ok(html.includes('&lt;script&gt;'));
+});
+
+test('materialBody drops the title, byline and closing note of a file', () => {
+  const file = ['# №01. Тема', '', '**Лектор:** Имя', '', '> пометка', '', '---', '', '## Часть', '', 'Текст.', '', '---', '', '*Сноска о том, что это не стенограмма.*', ''].join('\n');
+  assert.equal(materialBody(file), '## Часть\n\nТекст.');
+  assert.equal(materialBody('Просто текст'), 'Просто текст');
 });

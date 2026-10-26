@@ -316,6 +316,8 @@ export function saveIssue(data, lecturerIds, photoIds, id = null) {
     cover_id: data.cover_id || null,
     listeners: Number(data.listeners) || 0,
     note_author: data.note_author || '',
+    material_ru: data.material_ru || '',
+    material_en: data.material_en || '',
     checked: data.checked ? 1 : 0,
     reg_enabled: data.reg_enabled ? 1 : 0,
     reg_url: data.reg_url || '',
@@ -333,7 +335,7 @@ export function saveIssue(data, lecturerIds, photoIds, id = null) {
         `UPDATE issues SET number=@number,slug=@slug,title_ru=@title_ru,title_en=@title_en,start_at=@start_at,place_ru=@place_ru,place_en=@place_en,
          status_flag=@status_flag,announce_ru=@announce_ru,announce_en=@announce_en,thought_ru=@thought_ru,thought_en=@thought_en,ideas=@ideas,
          terms=@terms,qa=@qa,video_cut_url=@video_cut_url,video_cut_len=@video_cut_len,video_full_url=@video_full_url,video_full_len=@video_full_len,
-         slides_id=@slides_id,slides_ok=@slides_ok,reads=@reads,cover_id=@cover_id,listeners=@listeners,note_author=@note_author,checked=@checked,reg_enabled=@reg_enabled,
+         slides_id=@slides_id,slides_ok=@slides_ok,reads=@reads,cover_id=@cover_id,listeners=@listeners,note_author=@note_author,material_ru=@material_ru,material_en=@material_en,checked=@checked,reg_enabled=@reg_enabled,
          reg_url=@reg_url,autograph_id=@autograph_id,tags=@tags,show_rating=@show_rating,publish_state=@publish_state,publish_at=@publish_at,
          updated_at=@updated_at WHERE id=@id`,
       ).run({ ...row, id });
@@ -341,10 +343,10 @@ export function saveIssue(data, lecturerIds, photoIds, id = null) {
       const info = db
         .prepare(
           `INSERT INTO issues(number,slug,title_ru,title_en,start_at,place_ru,place_en,status_flag,announce_ru,announce_en,thought_ru,thought_en,ideas,terms,qa,
-           video_cut_url,video_cut_len,video_full_url,video_full_len,slides_id,slides_ok,reads,cover_id,listeners,note_author,checked,reg_enabled,reg_url,autograph_id,
+           video_cut_url,video_cut_len,video_full_url,video_full_len,slides_id,slides_ok,reads,cover_id,listeners,note_author,material_ru,material_en,checked,reg_enabled,reg_url,autograph_id,
            tags,show_rating,publish_state,publish_at,updated_at,is_demo)
            VALUES(@number,@slug,@title_ru,@title_en,@start_at,@place_ru,@place_en,@status_flag,@announce_ru,@announce_en,@thought_ru,@thought_en,@ideas,@terms,@qa,
-           @video_cut_url,@video_cut_len,@video_full_url,@video_full_len,@slides_id,@slides_ok,@reads,@cover_id,@listeners,@note_author,@checked,@reg_enabled,@reg_url,@autograph_id,
+           @video_cut_url,@video_cut_len,@video_full_url,@video_full_len,@slides_id,@slides_ok,@reads,@cover_id,@listeners,@note_author,@material_ru,@material_en,@checked,@reg_enabled,@reg_url,@autograph_id,
            @tags,@show_rating,@publish_state,@publish_at,@updated_at,@is_demo)`,
         )
         .run({ ...row, is_demo: data.is_demo ? 1 : 0 });

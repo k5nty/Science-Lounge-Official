@@ -405,6 +405,28 @@ test('slides need the lecturer-permission flag to appear', async () => {
   assert.ok((await anon.get(`/vypusk/${slug}`)).text.includes('Слайды (PDF)'));
 });
 
+test('material on the lecture topic: folded under the issue in RU and EN, hidden when empty', async () => {
+  const f = future(-80);
+  const form = { number: 55, title_ru: 'С материалом', title_en: 'With material', date: f.date, time: f.time, lecturers: String(lecturerId), publish_state: 'published' };
+  let r = await adminPost('/admin/issues', form);
+  assert.equal(r.status, 303, r.text);
+  const id = Number(/\/admin\/issues\/(\d+)/.exec(r.location)[1]);
+  const slug = env.db.prepare('SELECT slug FROM issues WHERE id=?').get(id).slug;
+  assert.ok(!(await anon.get(`/vypusk/${slug}`)).text.includes('id="transcript"'), 'no section without material');
+
+  r = await adminPost(`/admin/issues/${id}`, { ...form, material_ru: '## Вступление\n\n**Лектор:** Добрый день!', material_en: '## Introduction\n\n**Speaker:** Good afternoon!' });
+  assert.equal(r.status, 303, r.text);
+  const ru = (await anon.get(`/vypusk/${slug}`)).text;
+  assert.ok(ru.includes('<h2>Материал по теме лекции</h2>') && ru.includes('Это не стенограмма'));
+  assert.ok(ru.includes('<summary>Читать материал</summary>') && ru.includes('<h3>Вступление</h3>'));
+  assert.ok(ru.indexOf('id="transcript"') < ru.indexOf('id="review"'), 'material comes before the review form');
+  const en = (await anon.get(`/en/issues/${slug}`)).text;
+  assert.ok(en.includes('<h2>Material on the lecture topic</h2>') && en.includes('<summary>Read the material</summary>'));
+  assert.ok(en.includes('<b>Speaker:</b> Good afternoon!'));
+  assert.ok(!en.includes('Read the full write-up'), 'no link to the Russian write-up on EN pages');
+  assert.ok((await admin.get(`/admin/issues/${id}`)).text.includes('Добрый день!'), 'admin form keeps the text');
+});
+
 test('English version: translated content and a language switch that lands on the same page', async () => {
   const f = future(-90);
   const r = await adminPost('/admin/issues', {

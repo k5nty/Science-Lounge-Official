@@ -211,6 +211,13 @@
         </div>
       </section>
 
+      <section class="a-section" id="s-topic">
+        <h2>Материал по теме лекции <span class="a-opt">необязательно</span></h2>
+        <p class="a-hint">Длинный научно-популярный пересказ под анонсом. На сайте он свёрнут и подписан: «это не стенограмма, формулировки не принадлежат лектору». Разметка: <code>## заголовок</code>, <code>### подзаголовок</code>, списки <code>- пункт</code> и <code>1. пункт</code>, <code>**жирный**</code>, <code>*курсив*</code>, абзац <code>[Слайд: …]</code>. Тексты лекций лежат в папке <code>materialy-lektsiy/</code>.</p>
+        {{ a.field('Текст (RU)', 'material_ru', issue.material_ru, {rows: 14, wide: true}) }}
+        {{ a.field('Текст (EN)', 'material_en', issue.material_en, {rows: 14, wide: true}) }}
+      </section>
+
       <section class="a-section" id="s-check">
         <h2>Проверка и итоги</h2>
         <div class="a-grid">
@@ -250,7 +257,7 @@
       </div>
       {% endif %}
       <nav class="a-toc" aria-label="Разделы формы">
-        <a href="#s-main">Основное</a><a href="#s-announce">Анонс</a><a href="#s-material">Материал</a><a href="#s-video">Видео</a><a href="#s-photos">Фото</a><a href="#s-materials">Материалы</a><a href="#s-check">Проверка</a><a href="#s-publish">Публикация</a>
+        <a href="#s-main">Основное</a><a href="#s-announce">Анонс</a><a href="#s-material">Материал</a><a href="#s-video">Видео</a><a href="#s-photos">Фото</a><a href="#s-materials">Материалы</a><a href="#s-topic">По теме лекции</a><a href="#s-check">Проверка</a><a href="#s-publish">Публикация</a>
       </nav>
     </aside>
   </div>

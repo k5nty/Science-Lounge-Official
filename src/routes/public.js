@@ -18,6 +18,7 @@ import {
   issueIsVisible,
 } from '../models.js';
 import { renderRich, makeTermContext, plainText, truncate } from '../lib/markup.js';
+import { renderMaterial } from '../lib/material.js';
 import { readingMinutes } from '../views.js';
 import { latestChannelPost } from '../lib/telegram.js';
 import { formToken } from '../lib/security.js';
@@ -436,6 +437,7 @@ export function buildIssueView(issue, res) {
     notes,
     qa,
     announceHtml,
+    materialHtml: renderMaterial(issue.material_ru),
     hasMath: state.math,
     glossary: issue.terms.filter((x) => x.term && x.def),
     readMin: readingMinutes(issue),
@@ -511,7 +513,7 @@ both('issue', (req, res, next) => {
   if (!issue || !issueIsVisible(issue)) return next();
   const no = `№ ${String(issue.number).padStart(2, '0')}`;
   if (lang === 'en') {
-    // English: a card (topic, key idea, speaker, date); the full write-up stays Russian, as the brief says.
+    // English: a card (topic, key idea, speaker, date) and, when there is one, the material on the lecture topic.
     seo(res, {
       key: 'issue',
       params: { slug: issue.slug },
@@ -521,7 +523,7 @@ both('issue', (req, res, next) => {
       type: 'article',
     });
     res.locals.activeNav = 'lectures';
-    return res.render('pages/en-issue', { issue, status: statusOf(issue) });
+    return res.render('pages/en-issue', { issue, status: statusOf(issue), materialHtml: renderMaterial(issue.material_en) });
   }
   const view = buildIssueView(issue, res);
   seo(res, {

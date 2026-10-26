@@ -1,0 +1,13 @@
+{# Material on the lecture topic: a long retelling, folded by default. Expects `materialHtml`. #}
+{% if materialHtml %}
+<section class="block" id="transcript">
+  <h2>{{ t('issue.material') }}</h2>
+  <p class="transcript-note"><b>{{ t('issue.material') }}.</b> {{ t('issue.material_note') }}</p>
+  <details class="transcript">
+    <summary>{{ t('issue.material_open') }}</summary>
+    <div class="transcript-body prose-page">
+{{ materialHtml | safe }}
+    </div>
+  </details>
+</section>
+{% endif %}

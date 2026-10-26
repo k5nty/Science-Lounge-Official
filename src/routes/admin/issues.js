@@ -87,6 +87,8 @@ function parseIssueBody(body, existing) {
   d.autograph_id = intOr(b.autograph_id) || null;
   d.listeners = Math.max(0, intOr(b.listeners));
   d.note_author = clean(b.note_author, 200);
+  d.material_ru = clean(b.material_ru, 40000);
+  d.material_en = clean(b.material_en, 40000);
   d.checked = checked(b.checked);
   d.reg_enabled = checked(b.reg_enabled);
   d.reg_url = safeUrl(b.reg_url);
@@ -190,6 +192,8 @@ issuesRouter.get('/new', (req, res) => {
     video_full_len: '',
     listeners: 0,
     note_author: '',
+    material_ru: '',
+    material_en: '',
     checked: 0,
     reg_enabled: 0,
     reg_url: '',

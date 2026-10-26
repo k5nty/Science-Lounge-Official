@@ -13,6 +13,7 @@ import { saveSettings } from '../src/settings.js';
 import { slugify, issueSlug } from '../src/lib/slug.js';
 import { mskToUtcIso } from '../src/lib/dates.js';
 import { typo } from '../src/lib/typo.js';
+import { importMaterials } from './import-materials.js';
 
 const SRC = process.argv[2] || path.join(os.homedir(), 'Downloads', 'ChatExport_вова назаров');
 const PH = path.join(SRC, 'photos');
@@ -134,8 +135,8 @@ const ISSUES = [
   {
     n: 6, lecturer: 'namsaraev', date: '2026-10-02', time: '16:10', place: 'Школа «Летово», Зимний сад', place_en: 'Letovo School, Winter Garden',
     title: 'Антарктида: льды, жизнь и исследования', title_en: 'Antarctica: ice, life and research',
-    announce: 'Как образовался ледяной континент, почему он так важен для науки и как сегодня живут и работают полярники.\n\nРечь пойдёт о микроорганизмах, выживающих в экстремальных условиях, об открытии Антарктиды российскими моряками, покорении Южного полюса и современном освоении материка. Также расскажем, как сегодня ведутся исследования, как полярники передвигаются, живут и работают на станциях, и о суровой природе Антарктиды. Лекция покажет этот континент как уникальную научную лабораторию и пример человеческого мужества.\n\nЗаписи лекции нет: лектор попросил не распространять данные о ней во внешних каналах.',
-    announce_en: 'How the icy continent formed, why it matters so much for science and how polar explorers live and work today.\n\nThe talk covers microorganisms that survive in extreme conditions, the discovery of Antarctica by Russian sailors, the conquest of the South Pole and the modern exploration of the continent. We will also describe how research is done today, how polar explorers travel, live and work at stations, and about the harsh nature of Antarctica. The talk shows the continent as a unique scientific laboratory and an example of human courage.\n\nThere is no recording: the speaker asked us not to share details of the talk through external channels.',
+    announce: 'Как образовался ледяной континент, почему он так важен для науки и как сегодня живут и работают полярники.\n\nРечь пойдёт о микроорганизмах, выживающих в экстремальных условиях, об открытии Антарктиды российскими моряками, покорении Южного полюса и современном освоении материка. Также расскажем, как сегодня ведутся исследования, как полярники передвигаются, живут и работают на станциях, и о суровой природе Антарктиды. Лекция покажет этот континент как уникальную научную лабораторию и пример человеческого мужества.\n\nВидеозаписи лекции нет: лектор не давал согласия на съёмку.',
+    announce_en: 'How the icy continent formed, why it matters so much for science and how polar explorers live and work today.\n\nThe talk covers microorganisms that survive in extreme conditions, the discovery of Antarctica by Russian sailors, the conquest of the South Pole and the modern exploration of the continent. We will also describe how research is done today, how polar explorers travel, live and work at stations, and about the harsh nature of Antarctica. The talk shows the continent as a unique scientific laboratory and an example of human courage.\n\nThere is no video recording: the speaker did not consent to filming.',
     tags: ['науки о Земле (earth science)', 'биология (biology)'],
     poster: { file: 'photo_1541961_0.jpg', alt: 'Афиша лекции Зоригто Намсараева, 2 октября' },
   },
@@ -247,4 +248,6 @@ saveSettings({
   about_story_en: 'Science Lounge (“Nauchnye gostinye”) is a project by Letovo School students. We invite researchers and university teachers to speak to school students, and publish announcements, write-ups and recordings of the talks here.\n\nTogether with the lecture series we run the “Letovo Engineers” conference.',
 });
 
-console.log(`Импортировано: лекторов ${Object.keys(LECTURERS).length}, выпусков ${ISSUES.length}, новостей ${NEWS.length}, конференция 2026.`);
+const materials = importMaterials();
+
+console.log(`Импортировано: лекторов ${Object.keys(LECTURERS).length}, выпусков ${ISSUES.length}, новостей ${NEWS.length}, материалов по темам лекций ${materials.length}, конференция 2026.`);

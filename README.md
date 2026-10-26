@@ -34,6 +34,7 @@ npm start                         # http://localhost:3000   админка: /adm
 | `docs/ARCHITECTURE.md` | устройство проекта и решения |
 | `docs/ACCEPTANCE.md` | проверка по критериям приёмки из ТЗ |
 | `docs/soglasie-lektora.html` | шаблон согласия лектора (печать или PDF) |
+| `materialy-lektsiy/` | материалы по темам лекций (RU и EN) и шаблон письма лекторам |
 | `deploy/` | Caddy, nginx, systemd |
 
 ## Команды
@@ -46,6 +47,7 @@ npm start                         # http://localhost:3000   админка: /adm
 | `npm run admin:create -- почта "Имя" пароль [editor\|admin]` | создать или обновить пользователя |
 | `npm run seed:demo` / `seed:clear` | добавить / убрать демо-данные |
 | `npm run backup` | копия базы и фото сейчас |
+| `npm run content:materials` | загрузить материалы по темам лекций из `materialy-lektsiy/` в выпуски |
 
 ## Лицензии зависимостей
 

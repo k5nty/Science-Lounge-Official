@@ -238,4 +238,10 @@ export const migrations = [
   ALTER TABLE news ADD COLUMN auto INTEGER NOT NULL DEFAULT 0;
   CREATE UNIQUE INDEX news_external ON news(external_id) WHERE external_id IS NOT NULL;
   `,
+
+  /* 5: material on the lecture topic (a popular-science retelling, Markdown), shown under the issue in RU and EN */
+  `
+  ALTER TABLE issues ADD COLUMN material_ru TEXT NOT NULL DEFAULT '';
+  ALTER TABLE issues ADD COLUMN material_en TEXT NOT NULL DEFAULT '';
+  `,
 ];

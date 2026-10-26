@@ -200,6 +200,8 @@
   <p class="tags" style="margin-top:16px">{% for tg in issue.tags %}<a href="/vypuski?tag={{ tagKey(tg) | urlencode }}">#{{ tagName(tg) }}</a>{% endfor %}</p>
   {% endif %}
 
+  {% set materialHtml = v.materialHtml %}{% include "partials/material.njk" %}
+
   <section class="block" id="review">
     <h2>{{ t('issue.review') }}</h2>
     {{ f.review(issue) }}
