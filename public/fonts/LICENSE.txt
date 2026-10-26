@@ -1,3 +1,0 @@
-Literata (Google / TypeTogether), Golos Text (ParaType), JetBrains Mono (JetBrains)
-are licensed under the SIL Open Font License 1.1: https://openfontlicense.org
-Font files are redistributed unmodified from the @fontsource packages.
