@@ -2,7 +2,7 @@
 
 Статический сайт лектория Science Lounge школы «Летово»: анонсы лекций, конспекты, расписание, конференция и новости науки. Есть русская и английская версии.
 
-Сайт публикуется через GitHub Pages: https://k5nty.github.io/science-lounge-official/
+Сайт публикуется через GitHub Pages: https://k5nty.github.io/Science-Lounge-Official/
 
 ## Структура
 
@@ -12,7 +12,7 @@
 - `raspisanie/`, `raspisanie.ics` — расписание и календарь
 - `assets/` — стили, скрипты, шрифты; `media/`, `og/` — изображения
 
-Все ссылки начинаются с `/science-lounge-official/`, поэтому репозиторий должен называться `science-lounge`.
+Все ссылки начинаются с `/Science-Lounge-Official/`, поэтому репозиторий должен называться `science-lounge`.
 
 ## Как добавить новость
 
